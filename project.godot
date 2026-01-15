@@ -25,4 +25,4 @@ LibrarianMessageBus="*res://addons/librarian/scripts/message_bus.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/librarian/plugin.cfg", "res://addons/scene-selector/plugin.cfg")
+enabled=PackedStringArray("res://addons/librarian/plugin.cfg")
