@@ -3,7 +3,9 @@
 A trusty librarian to manage and validate structured, interconnected data.
 
 > [!WARNING]  
-> Librarian is in early development! To protect your project data, use source control on any project with Librarian integrated.
+> Librarian is in early development! Breaking changes are still occurring frequently without announcement, especially when it comes to data persistence.
+> 
+> Librarian is currently not recommended for project use. To protect your project data, use source control on any project with Librarian integrated.
 
 Somewhere between a spreadsheet and a SQL database, Librarian is a Godot 4 editor plugin for managing typed, tabular game data. It guides the developer to various inconsistencies in game data at development time based on user-defined, declarative tests for data compliance.
 
