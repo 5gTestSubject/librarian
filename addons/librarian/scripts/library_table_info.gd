@@ -33,7 +33,7 @@ func deep_copy() -> LibraryTableInfo:
 
 func to_dict() -> Dictionary:
     var ret := {}
-    ret["version"] = "1"
+    ret["version"] = "pre-alpha"
     ret["id"] = id
     ret["name"] = name
     ret["description"] = description
