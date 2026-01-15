@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5axjfp2jx7eb"]
+
+[ext_resource type="PackedScene" uid="uid://shai2itvmcq3" path="res://addons/librarian/ui/table_dock.tscn" id="1_fgoh7"]
+[ext_resource type="PackedScene" uid="uid://ofyq237y1tq4" path="res://addons/librarian/ui/library_dock.tscn" id="2_o7ha5"]
+[ext_resource type="PackedScene" uid="uid://b01akgbfoh4rp" path="res://addons/librarian/ui/main_screen.tscn" id="3_rsd5g"]
+
+[node name="MultiWindowedInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 270
+
+[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer"]
+layout_mode = 2
+split_offset = 275
+
+[node name="Table" parent="HSplitContainer/VSplitContainer" instance=ExtResource("1_fgoh7")]
+layout_mode = 2
+
+[node name="Library" parent="HSplitContainer/VSplitContainer" instance=ExtResource("2_o7ha5")]
+layout_mode = 2
+
+[node name="MainScreen" parent="HSplitContainer" instance=ExtResource("3_rsd5g")]
+layout_mode = 2

@@ -1,0 +1,94 @@
+[gd_scene load_steps=7 format=3 uid="uid://ofyq237y1tq4"]
+
+[ext_resource type="Script" uid="uid://d4htprkqbne5n" path="res://addons/librarian/ui/library_dock.gd" id="1_5uv33"]
+[ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="2_bhsn3"]
+[ext_resource type="Script" uid="uid://c4el1hf3jjwvd" path="res://addons/librarian/ui/tables_tree.gd" id="2_om6fh"]
+[ext_resource type="Texture2D" uid="uid://c5svq0m5raph1" path="res://addons/librarian/res/icons/godot/Grid.svg" id="3_5uv33"]
+[ext_resource type="Texture2D" uid="uid://bdiei3xy4c4do" path="res://addons/librarian/res/icons/godot/Load.svg" id="6_2vb1b"]
+[ext_resource type="Texture2D" uid="uid://dvf28js7cqcm3" path="res://addons/librarian/res/icons/godot/Remove.svg" id="7_3fa1d"]
+
+[node name="Library" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5uv33")
+library_path = "res://data/library"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="NewTableButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Create new table"
+icon = ExtResource("2_bhsn3")
+
+[node name="TablesTree" type="Tree" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+allow_reselect = true
+allow_rmb_select = true
+hide_root = true
+scroll_horizontal_enabled = false
+script = ExtResource("2_om6fh")
+library_path = "res://data/library"
+table_icon = ExtResource("3_5uv33")
+
+[node name="ContextMenu" type="PopupMenu" parent="VBoxContainer/TablesTree"]
+item_count = 4
+item_0/text = "Open"
+item_0/icon = ExtResource("6_2vb1b")
+item_0/id = 0
+item_1/id = 1
+item_1/separator = true
+item_2/text = "Rename"
+item_2/id = 2
+item_3/text = "Delete"
+item_3/icon = ExtResource("7_3fa1d")
+item_3/id = 3
+
+[node name="NewTableDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Create Table"
+initial_position = 2
+size = Vector2i(300, 150)
+popup_window = true
+
+[node name="GridContainer" type="GridContainer" parent="NewTableDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 292.0
+offset_bottom = 101.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="Label" type="Label" parent="NewTableDialog/GridContainer"]
+layout_mode = 2
+text = "Name"
+
+[node name="NewTableNameField" type="LineEdit" parent="NewTableDialog/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="NewTableDialog/GridContainer"]
+layout_mode = 2
+text = "Description"
+
+[node name="NewTableDescriptionField" type="LineEdit" parent="NewTableDialog/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/NewTableButton" to="." method="_on_new_table_button_pressed"]
+[connection signal="item_activated" from="VBoxContainer/TablesTree" to="VBoxContainer/TablesTree" method="_on_item_activated"]
+[connection signal="item_mouse_selected" from="VBoxContainer/TablesTree" to="VBoxContainer/TablesTree" method="_on_item_mouse_selected"]
+[connection signal="id_pressed" from="VBoxContainer/TablesTree/ContextMenu" to="VBoxContainer/TablesTree" method="_on_context_menu_id_pressed"]
+[connection signal="about_to_popup" from="NewTableDialog" to="." method="_on_new_table_dialog_about_to_popup"]
+[connection signal="confirmed" from="NewTableDialog" to="." method="_on_new_table_dialog_confirmed"]

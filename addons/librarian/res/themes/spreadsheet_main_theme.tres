@@ -1,0 +1,19 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://blrr2y7uf5t8v"]
+
+[ext_resource type="StyleBox" uid="uid://boiu76memdwmr" path="res://addons/librarian/res/themes/spreadsheet_cell_stylebox.tres" id="1_nlykd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nlykd"]
+content_margin_left = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nmwpk"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hdjqf"]
+content_margin_left = 4.0
+
+[resource]
+GridContainer/constants/h_separation = 0
+GridContainer/constants/v_separation = 0
+Label/styles/normal = SubResource("StyleBoxEmpty_nlykd")
+LineEdit/styles/focus = SubResource("StyleBoxEmpty_nmwpk")
+LineEdit/styles/normal = SubResource("StyleBoxEmpty_hdjqf")
+PanelContainer/styles/panel = ExtResource("1_nlykd")

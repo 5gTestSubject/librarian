@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnusmwfgcck78"]
+
+[ext_resource type="Script" uid="uid://b712l1cb4n8qo" path="res://addons/librarian/ui/spreadsheet/cells/bool_cell.gd" id="1_1ctb2"]
+[ext_resource type="PackedScene" uid="uid://bgor1ye1gg5go" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.tscn" id="1_2jghw"]
+
+[node name="CellBase" instance=ExtResource("1_2jghw")]
+
+[node name="BoolCell" type="CheckBox" parent="." index="0"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+script = ExtResource("1_1ctb2")

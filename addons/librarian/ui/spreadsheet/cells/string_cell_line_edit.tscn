@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhx4ta4avl4pm"]
+
+[ext_resource type="PackedScene" uid="uid://bgor1ye1gg5go" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.tscn" id="1_qgi47"]
+[ext_resource type="Script" uid="uid://bilgwxnrvur2s" path="res://addons/librarian/ui/spreadsheet/cells/string_cell_line_edit.gd" id="2_vmpli"]
+
+[node name="CellBase" instance=ExtResource("1_qgi47")]
+
+[node name="LineEdit" type="LineEdit" parent="." index="0"]
+layout_mode = 2
+script = ExtResource("2_vmpli")

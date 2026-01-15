@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bgor1ye1gg5go"]
+
+[ext_resource type="Script" uid="uid://dklsaaxrhbwoo" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.gd" id="1_xjblx"]
+[ext_resource type="Theme" uid="uid://dr15ivf6f43ci" path="res://addons/librarian/res/themes/cell_focus_theme.tres" id="2_fdicf"]
+
+[node name="CellBase" type="PanelContainer"]
+focus_mode = 2
+script = ExtResource("1_xjblx")
+focus_theme = ExtResource("2_fdicf")
+
+[connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]

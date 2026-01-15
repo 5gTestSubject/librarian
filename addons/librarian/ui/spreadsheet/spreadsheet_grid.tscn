@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://c26oix342rfcb"]
+
+[ext_resource type="Theme" uid="uid://blrr2y7uf5t8v" path="res://addons/librarian/res/themes/spreadsheet_main_theme.tres" id="1_65r8d"]
+[ext_resource type="Script" uid="uid://boopyald8o7r3" path="res://addons/librarian/ui/spreadsheet/spreadsheet_grid.gd" id="1_fnddd"]
+
+[node name="Spreadsheet" type="GridContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_65r8d")
+columns = 3
+script = ExtResource("1_fnddd")

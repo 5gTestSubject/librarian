@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://87nkweq8fa0f"]
+
+[ext_resource type="StyleBox" uid="uid://b7fpxijtx8bbj" path="res://addons/librarian/res/themes/spreadsheet_cell_stylebox_title.tres" id="1_yxknk"]
+
+[resource]
+PanelContainer/styles/panel = ExtResource("1_yxknk")

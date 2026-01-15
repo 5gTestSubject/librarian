@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://bamb5kpruxhsv"]
+
+[ext_resource type="Script" uid="uid://vp8b8fg55508" path="res://addons/librarian/ui/spreadsheet/cells/number_cell.gd" id="1_4iyeo"]
+[ext_resource type="PackedScene" uid="uid://bgor1ye1gg5go" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.tscn" id="1_ql67e"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_03m6f"]
+
+[sub_resource type="Theme" id="Theme_oen6p"]
+PanelContainer/styles/panel = SubResource("StyleBoxEmpty_03m6f")
+
+[node name="CellBase" instance=ExtResource("1_ql67e")]
+
+[node name="NumberCell" type="PanelContainer" parent="." index="0"]
+layout_mode = 2
+theme = SubResource("Theme_oen6p")
+script = ExtResource("1_4iyeo")
+
+[node name="Editor" type="SpinBox" parent="NumberCell" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.001
+allow_greater = true
+allow_lesser = true
+alignment = 2
+update_on_text_changed = true
+custom_arrow_step = 0.01
+
+[node name="PlainDisplay" type="Label" parent="NumberCell" index="1"]
+visible = false
+layout_mode = 2

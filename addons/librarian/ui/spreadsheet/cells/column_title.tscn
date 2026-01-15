@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cg3o1oags4h8q"]
+
+[ext_resource type="Theme" uid="uid://87nkweq8fa0f" path="res://addons/librarian/res/themes/spreadsheet_col_titles_theme.tres" id="1_ih2ob"]
+[ext_resource type="Script" uid="uid://css1tvldlhw1u" path="res://addons/librarian/ui/spreadsheet/cells/column_title.gd" id="1_l4hb5"]
+
+[node name="ColumnTitle" type="PanelContainer"]
+theme = ExtResource("1_ih2ob")
+script = ExtResource("1_l4hb5")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Col 01"

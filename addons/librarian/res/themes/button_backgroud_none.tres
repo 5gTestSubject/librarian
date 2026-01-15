@@ -1,0 +1,9 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://yfy2riopbfwe"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jsevt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mgko3"]
+
+[resource]
+Button/styles/disabled = SubResource("StyleBoxEmpty_jsevt")
+Button/styles/normal = SubResource("StyleBoxEmpty_mgko3")
