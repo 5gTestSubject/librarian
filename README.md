@@ -28,7 +28,7 @@ A string is not a texture and no sane code will turn an arbitrary `Hello, world!
 
 Librarian supports flags, numbers, text, textures, themes, color palettes, general scenes and resources, and more as field types.
 
-### Declarative Data Tests
+### Declarative Data Tests *(Coming Soon)*
 
 Need to ensure unique IDs? Not sure if you have every character portrait for your dialogue system? Does every weapon in your item system need a corresponding weapon stats definition? Librarian has you covered.
 
@@ -36,11 +36,11 @@ Write tests which describe your data declaratively using GDScript and Librarian 
 
 Test compliance is not a strict requirement. It can be hard to keep up with all your rules while rapidly prototyping. You can still save non-compliant datasheets and trust your game code to handle missing or inconsistent data as needed. Librarian will not stop you, it will only alert you.
 
-### Global Tagging System
+### Global Tagging System *(Coming Soon)*
 
 Every spreadsheet has a `Tags` column. Tags are defined with a unique name at the project level and can be placed on any row in any spreadsheet. In addition to being available to your game at runtime, tags are primarily useful for data tests.
 
-### Getting Started
+## Getting Started
 
 > [!TIP]  
 > This plugin uses a tab bar at the top of its main screen component, which may be confusing when beneath the editor's tab bar of open scenes.
