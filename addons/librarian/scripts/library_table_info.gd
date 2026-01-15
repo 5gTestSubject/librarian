@@ -42,7 +42,7 @@ func to_dict() -> Dictionary:
     return ret
 
 static func from_dict(raw: Dictionary) -> LibraryTableInfo:
-    assert(raw["version"] == "1", "Unidentified metadata version %s" % raw["version"])
+    assert(raw["version"] == "pre-alpha", "Unidentified metadata version %s" % raw["version"])
     var table = LibraryTableInfo.new()
     table.id = raw.get("id", -1)
     table.name = raw.get("name", "")
