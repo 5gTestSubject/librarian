@@ -1,5 +1,7 @@
 @tool
 
+const Properties = preload("res://addons/librarian/properties.gd")
+
 const MAX_INT := 2147483647
 
 const COL_TYPE_BOOL := &"bool"
@@ -13,7 +15,7 @@ const COL_TYPEHINT_DECIMAL := &"Decimal"
 
 const MAIN_SCREEN_NAME = "Librarian"
 
-const MetadataSuffx := ".metadata.json"
+const CSV_FILE_EXTENSION := ".ltcsv"
 
 static func printwarn(msg: String) -> void:
     print_rich("[color=Yellow]%s[/color]" % msg)
@@ -22,52 +24,42 @@ static func path_combine(path1: String, path2: String) -> String:
     return path1.trim_suffix("/") + "/" + path2.trim_prefix("/")
 
 #region Table Operations
-#region Create
-static func create_table(data_path: String, name: String, description: String = "") -> void:
-    if FileAccess.file_exists(data_path + MetadataSuffx):
-        if not FileAccess.file_exists(data_path):
-            var file = FileAccess.open(data_path, FileAccess.WRITE)
-            file.flush()
-            file.close()
-        return
+static func to_csv_filepath(table_path: String) -> String:
+    return path_combine(Properties.get_library_location(), table_path + CSV_FILE_EXTENSION)
+
+static func create_table_csv(table_path: String, name: String, description: String = "") -> bool:
+    var file_path := to_csv_filepath(table_path)
+    if FileAccess.file_exists(file_path):
+        return false
     var metadata = LibraryTableInfo.new()
     metadata.name = name
     metadata.description = description
-    save_metadata(data_path + MetadataSuffx, metadata)
-    var file = FileAccess.open(data_path, FileAccess.WRITE)
+    var file = FileAccess.open(file_path, FileAccess.WRITE)
+    file.store_csv_line([JSON.stringify(metadata.to_dict())])
     file.flush()
     file.close()
+    return true
 
-#endregion
+## Returns a 2-array containing the table metadata as LibraryTableInfo
+## and an iterator over the table rows.
+func load_table_csv(table_path: String) -> Array:
+    printerr("TODO load table")
+    return []
 
-#region Delete
-static func delete_table(data_path: String) -> void:
-    if FileAccess.file_exists(data_path + MetadataSuffx):
-        DirAccess.remove_absolute(data_path + MetadataSuffx)
-    if FileAccess.file_exists(data_path):
-        DirAccess.remove_absolute(data_path)
-#endregion
+static func save_table(table_path: String, metadata: LibraryTableInfo, row_data_iterator) -> bool:
+    if not metadata:
+        return false
+    var file_path := to_csv_filepath(table_path)
+    var file = FileAccess.open(file_path, FileAccess.WRITE)
+    file.store_csv_line([JSON.stringify(metadata.to_dict())])
+    for line in CsvSerializationIterator.new(row_data_iterator, convert_to_string):
+        file.store_csv_line(line)
+    file.flush()
+    file.close()
+    return true
 
-#region Load
-static func load_metadata(data_path: String) -> LibraryTableInfo:
-    var metadata = LibraryTableInfo.new()
-    if FileAccess.file_exists(data_path + MetadataSuffx):
-        var raw_metadata = JSON.parse_string(
-            FileAccess.get_file_as_string(data_path + MetadataSuffx))
-        metadata = LibraryTableInfo.from_dict(raw_metadata)
-    return metadata
-
-## Loads a table fom the given path using the provided metadata
-## Returns an iterator of data rows in the table
-static func load_table(path: String, metadata: LibraryTableInfo) -> CsvDeserializationIterator:
-    return CsvDeserializationIterator.new(
-        load_raw_table(path),
-        func(row: PackedStringArray): return parse_row(metadata, row))
-
-## Loads CSV text line-by-line.
-## Returns an iterator of those lines.
-static func load_raw_table(path: String) -> CsvFileIterator:
-    return CsvFileIterator.new(path)
+static func delete_table_csv(table_path: String) -> void:
+    DirAccess.remove_absolute(to_csv_filepath(table_path))
 
 static func parse_row(metadata: LibraryTableInfo, row: PackedStringArray) -> Array:
     if row.size() == 0 or (row.size() == 1 and row[0] == ""): return []
@@ -84,31 +76,6 @@ static func parse_row(metadata: LibraryTableInfo, row: PackedStringArray) -> Arr
                 printwarn("Unrecognized column type %s. CSV value: %s"
                     % [metadata.fields[i].type, row[i]])
     return parsed_row
-#endregion
-
-#region Save
-## Saves a table to disk, along with it's metadata.
-## Null metadata will leave the existing metadata alone on disk.
-## If no metadata exists on disk and no metadata is provided,
-## dummy metadata will be written to disk.
-static func save_table(path: String, metadata: LibraryTableInfo, row_data_iterator) -> void:
-    save_metadata(path + MetadataSuffx, metadata)
-
-    var file = FileAccess.open(path, FileAccess.WRITE)
-    for line in CsvSerializationIterator.new(row_data_iterator, convert_to_string):
-        file.store_csv_line(line)
-    file.flush()
-    file.close()
-
-static func save_metadata(metadata_path: String, metadata: LibraryTableInfo) -> void:
-    if metadata == null and !FileAccess.file_exists(metadata_path):
-        metadata = LibraryTableInfo.new()
-
-    var metadata_file = FileAccess.open(metadata_path, FileAccess.WRITE)
-    metadata_file.store_string(JSON.stringify(metadata.to_dict(), "  ", true))
-    metadata_file.flush()
-    metadata_file.close()
-#endregion
 #endregion
 
 #region Conversions
