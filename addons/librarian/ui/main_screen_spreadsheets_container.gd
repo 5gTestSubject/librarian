@@ -61,7 +61,7 @@ func sort_spreadsheets(table_id_order: Array[int]) -> void:
             var control = get_child(j) as Control
             if not control:
                 continue
-            if control.get_metadata().id == table_id_order[i]:
+            if control.metadata.id == table_id_order[i]:
                 move_child(control, i)
                 break
 
