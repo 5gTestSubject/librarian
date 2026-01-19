@@ -2,6 +2,7 @@
 extends Container
 
 func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
+const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Properties = preload("res://addons/librarian/properties.gd")
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
 const Util = preload("res://addons/librarian/utils.gd")
@@ -22,7 +23,10 @@ func _open_table(path: String) -> void:
     if sheet_idx >= 0:
         %SpreadsheetsTabBar.current_tab = sheet_idx
         return
-    var metadata := Util.load_metadata(path)
+    var table_reader = TableAccess.get_table_reader(path)
+    table_reader.open()
+    var metadata = table_reader.metadata
+    table_reader.close()
 
     var sheet = preload(
         "res://addons/librarian/ui/spreadsheet/spreadsheet_container.tscn"
@@ -42,8 +46,8 @@ func _open_table(path: String) -> void:
     ## edge case on creation of first tab
     if %SpreadsheetsTabBar.tab_count == 1:
         _on_spreadsheets_tab_bar_tab_changed(0)
-    message_bus().main_screen_table_changed.emit(metadata)
-    sheet.load_table(path, metadata)
+    message_bus().main_screen_table_changed.emit(table_reader.metadata)
+    sheet.load_table(path)
 
 ## Searches existing open sheets for one that has opened the given path.
 ## Returns the tab index of that sheet, or -1 if not found.

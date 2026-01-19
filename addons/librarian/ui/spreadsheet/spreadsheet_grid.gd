@@ -30,33 +30,16 @@ func _ready() -> void:
     message_bus().row_deleted.connect(_on_row_deleted)
     message_bus().row_moved.connect(_on_row_moved)
 
-func refresh_table(new_metadata: LibraryTableInfo, data_row_iterator) -> void:
+func reset_table(metadata: LibraryTableInfo) -> void:
     clear_grid(true)
-    _metadata = new_metadata
-    spreadsheet_columns = new_metadata.fields.size()
+    _metadata = metadata
+    spreadsheet_columns = metadata.fields.size()
     for _i in range(extra_columns):
         add_child(Control.new())
     for field in _metadata.fields:
         var title = title_cell_scene.instantiate()
         add_child(title)
         title.cell_value = field.name
-    refresh_data(data_row_iterator)
-
-func refresh_data(data_row_iterator) -> void:
-    clear_grid()
-    for row in data_row_iterator:
-        for leading_cell in _get_leading_cells(get_spreadsheet_row_count() + 1):
-            add_child(leading_cell)
-        # add_child(CheckBox.new())
-        # var row_marker = title_cell_scene.instantiate()
-        # add_child(row_marker)
-        # row_marker.cell_value = str(get_spreadsheet_row_count() + 1)
-        # row_marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-        for i in range(row.size()):
-            var cell = _get_cell_scene(i)
-            add_child(cell)
-            cell.cell_value = row[i]
-    refresh_focus_neighbors()
 
 func refresh_focus_neighbors() -> void:
     # skip non-cell rows
@@ -95,11 +78,14 @@ func clear_grid(clear_title_row: bool = false) -> void:
         remove_child(child)
         child.queue_free()
 
-func add_row(row_idx: int = -1) -> void:
+func add_row(data: Array, row_idx: int = -1) -> void:
     for leading_cell in _get_leading_cells(get_spreadsheet_row_count() + 1):
         add_child(leading_cell)
     for i in range(spreadsheet_columns):
-        add_child(_get_cell_scene(i))
+        var cell = _get_cell_scene(i)
+        add_child(cell)
+        if i < data.size():
+            cell.cell_value = data[i]
 
     if row_idx >= 0:
         var insert_idx = (row_idx + extra_rows) * columns
@@ -262,7 +248,7 @@ func _on_field_moved(table_id: int, previous_field_idx: int, new_field_idx: int)
 func _on_row_added(table_id: int, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    add_row(row_idx)
+    add_row([], row_idx)
 
 func _on_row_deleted(table_id: int, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:

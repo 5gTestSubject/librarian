@@ -2,6 +2,7 @@
 extends Tree
 
 func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
+const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 const COL_NAME := 0
@@ -46,12 +47,13 @@ func refresh() -> void:
     for c in _library.get_children():
         _library.remove_child(c)
         c.free()
-    for file in dir.get_files():
-        if file.ends_with(".csv"):
+    for file_name in dir.get_files():
+        if file_name.ends_with(".ltcsv"):
+            var table_path = file_name.substr(0, file_name.length() - ".ltcsv".length())
             var item = _library.create_child()
-            item.set_text(COL_NAME, file.substr(0, file.length() - 4))
+            item.set_text(COL_NAME, table_path)
             item.set_icon(COL_NAME, table_icon)
-            item.set_metadata(COL_NAME, Util.path_combine(library_path, file))
+            item.set_metadata(COL_NAME, table_path)
 
 func _on_files_changed(_files: PackedStringArray) -> void:
     refresh()
@@ -73,6 +75,6 @@ func _on_context_menu_id_pressed(id: int) -> void:
         &"Rename":
             printerr("TODO: implement spreadsheet rename")
         &"Delete":
-            Util.delete_table(tree_item.get_metadata(COL_NAME))
+            TableAccess.delete_table(tree_item.get_metadata(COL_NAME))
         _:
             printerr("Unrecognized context menu operation.")

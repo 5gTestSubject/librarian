@@ -1,3 +1,4 @@
 "{""description"":"""",""fields"":[{""description"":"""",""id"":0,""name"":""Name"",""optional"":false,""text_info"":{""placeholder_text"":""""},""type"":""string""},{""description"":"""",""id"":1,""name"":""Description"",""optional"":false,""text_info"":{""placeholder_text"":""""},""type"":""string""},{""description"":"""",""id"":2,""name"":""MaxStack"",""number_info"":{""type"":""Integer""},""optional"":false,""type"":""number""}],""id"":1,""name"":""Items"",""next_field_id"":3,""version"":""pre-alpha""}"
 Axe,A trusty axe.,1
 Apple,Ooo tasty.,99
+Wine,Shh.,9

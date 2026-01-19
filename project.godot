@@ -18,3 +18,11 @@ config/name="Librarian"
 run/main_scene="uid://c5axjfp2jx7eb"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.svg"
+
+[autoload]
+
+LibrarianMessageBus="*res://addons/librarian/scripts/message_bus.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/librarian/plugin.cfg")

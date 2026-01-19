@@ -1,11 +1,12 @@
 @tool
 extends PanelContainer
 
+const Convert = preload("res://addons/librarian/scripts/convert.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 var cell_value = 0.0:
     get: return $Editor.value
-    set(v): $Editor.value = Util.convert_to_number(v)
+    set(v): $Editor.value = Convert.to_number(v)
 
 func format(metadata: LibraryTableFieldInfo) -> void:
     var num_metadata := metadata.number_info
