@@ -55,7 +55,7 @@ func remove_spreadsheet(index: int) -> bool:
                 return true
     return false
 
-func sort_spreadsheets(table_id_order: Array[int]) -> void:
+func sort_spreadsheets(table_id_order: Array[StringName]) -> void:
     for i in range(table_id_order.size()):
         for j in range(i, get_child_count()):
             var control = get_child(j) as Control

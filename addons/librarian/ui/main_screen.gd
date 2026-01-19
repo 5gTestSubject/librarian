@@ -103,7 +103,7 @@ func _on_spreadsheets_tab_bar_button_pressed(tab: int) -> void:
     %SpreadsheetsTabBar.remove_tab(tab)
 
 func _on_spreadsheets_tab_bar_active_tab_rearranged(_idx_to:int) -> void:
-    var ids: Array[int] = []
+    var ids: Array[StringName] = []
     ids.resize(%SpreadsheetsTabBar.tab_count)
     for i in range(%SpreadsheetsTabBar.tab_count):
         ids[i] = %SpreadsheetsTabBar.get_tab_metadata(i)["table_metadata"].id
