@@ -50,22 +50,22 @@ static func compare_column_sets(left_arr: Array[LibraryTableFieldInfo], right_ar
         changed
     ]
 
-static func _cols_array_to_dict(arr: Array[LibraryTableFieldInfo]) -> Dictionary[int, LibraryTableFieldInfo]:
-    var dict: Dictionary[int, LibraryTableFieldInfo] = {}
+static func _cols_array_to_dict(arr: Array[LibraryTableFieldInfo]) -> Dictionary[StringName, LibraryTableFieldInfo]:
+    var dict: Dictionary[StringName, LibraryTableFieldInfo] = {}
     for field in arr:
         dict[field.id] = field
     return dict
 
-static func _get_exclusive_ids(target: Dictionary[int, LibraryTableFieldInfo], comparison: Dictionary[int, LibraryTableFieldInfo]) -> Array[int]:
-    var ret: Array[int] = []
+static func _get_exclusive_ids(target: Dictionary[StringName, LibraryTableFieldInfo], comparison: Dictionary[StringName, LibraryTableFieldInfo]) -> Array[StringName]:
+    var ret: Array[StringName] = []
     for id in target:
         if not comparison.has(id):
             ret.append(id)
     ret.sort()
     return ret
 
-static func _get_common_ids(left: Dictionary[int, LibraryTableFieldInfo], right: Dictionary[int, LibraryTableFieldInfo]) -> Array[int]:
-    var ret: Array[int] = []
+static func _get_common_ids(left: Dictionary[StringName, LibraryTableFieldInfo], right: Dictionary[StringName, LibraryTableFieldInfo]) -> Array[StringName]:
+    var ret: Array[StringName] = []
     for id in left:
         if right.has(id):
             ret.append(id)

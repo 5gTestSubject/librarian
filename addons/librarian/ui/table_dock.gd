@@ -1,6 +1,8 @@
 @tool
 extends PanelContainer
 
+const UUID = preload("res://addons/librarian/scripts/uuid.gd")
+
 func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 
 @export var metadata: LibraryTableInfo:
@@ -31,6 +33,6 @@ func _on_new_field_submitted(name: String, description: String, type: StringName
     field.name = name
     field.description = description
     field.type = type
-    field.id = metadata.get_new_field_id()
+    field.id = UUID.v4()
     metadata.fields.append(field)
     message_bus().field_added.emit(metadata.id, metadata.fields.size() - 1)

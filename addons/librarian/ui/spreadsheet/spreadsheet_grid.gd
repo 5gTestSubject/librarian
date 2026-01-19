@@ -202,7 +202,7 @@ func _get_focused_cell_root_or_null() -> Control:
     return null
 
 #region Signal Actions
-func _on_field_updated(table_id: int, field_idx: int) -> void:
+func _on_field_updated(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     for i in range(columns + extra_columns + field_idx, get_child_count(), columns):
@@ -215,7 +215,7 @@ func _on_field_updated(table_id: int, field_idx: int) -> void:
         move_child(new_cell, i)
         new_cell.cell_value = cell_value
 
-func _on_field_added(table_id: int, field_idx: int) -> void:
+func _on_field_added(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     var total_rows = get_spreadsheet_row_count()
@@ -229,7 +229,7 @@ func _on_field_added(table_id: int, field_idx: int) -> void:
         add_child(cell)
         move_child(cell, ((i + extra_rows) * columns) + field_idx + extra_columns)
 
-func _on_field_deleted(table_id: int, field_idx: int) -> void:
+func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     for i in range(get_child_count() - spreadsheet_columns + field_idx, -1, -columns):
@@ -238,19 +238,19 @@ func _on_field_deleted(table_id: int, field_idx: int) -> void:
         child.queue_free()
     columns -= 1
 
-func _on_field_moved(table_id: int, previous_field_idx: int, new_field_idx: int) -> void:
+func _on_field_moved(table_id: StringName, previous_field_idx: int, new_field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     for i in range(extra_columns, get_child_count(), columns):
         var child = get_child(i + previous_field_idx)
         move_child(child, i + new_field_idx)
 
-func _on_row_added(table_id: int, row_idx: int) -> void:
+func _on_row_added(table_id: StringName, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     add_row([], row_idx)
 
-func _on_row_deleted(table_id: int, row_idx: int) -> void:
+func _on_row_deleted(table_id: StringName, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     var cell_idx := (extra_rows + row_idx) * columns
@@ -259,7 +259,7 @@ func _on_row_deleted(table_id: int, row_idx: int) -> void:
         remove_child(child)
         child.queue_free()
 
-func _on_row_moved(table_id: int, previous_row_idx: int, new_row_idx: int) -> void:
+func _on_row_moved(table_id: StringName, previous_row_idx: int, new_row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
     push_warning("TODO: implement row move")

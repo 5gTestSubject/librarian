@@ -127,7 +127,7 @@ func _on_delete_selected_rows_button_pressed() -> void:
     for row_idx in checked_rows:
         message_bus().row_deleted.emit(_get_active_spreadsheet_metadata().id, row_idx)
 
-func _on_row_select_updated(_table_id: int, _selected_row_count: int) -> void:
+func _on_row_select_updated(_table_id: StringName, _selected_row_count: int) -> void:
     _evaluate_active_controls()
 
 func _shortcut_input(event: InputEvent) -> void:
