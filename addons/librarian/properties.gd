@@ -1,3 +1,5 @@
+@tool
+
 const PROPERTY_BASE := "addons/librarian/"
 const PROPERTY_LIBRARY_LOCATION := PROPERTY_BASE + "library_location"
 const PROPERTY_LIBRARY_LOCATION__DEFAULT := "res://data/library"
@@ -22,5 +24,18 @@ const definitions := [
     }
 ]
 
+static var settings := {}
+static func _static_init() -> void:
+    settings.clear()
+    for def in definitions:
+        var name = def["name"]
+        if not ProjectSettings.has_setting(name):
+            ProjectSettings.set_setting(name, def["default"])
+        ProjectSettings.set_initial_value(name, def["default"])
+        ProjectSettings.set_as_basic(name, def["basic"])
+        ProjectSettings.set_as_internal(name, def["internal"])
+        ProjectSettings.add_property_info(def)
+        settings[name] = ProjectSettings.get_setting(name)
+
 static func get_library_location() -> String:
-    return ProjectSettings.get_setting(PROPERTY_LIBRARY_LOCATION, "res://")
+    return settings.get(PROPERTY_LIBRARY_LOCATION, PROPERTY_LIBRARY_LOCATION__DEFAULT)

@@ -1,11 +1,12 @@
 @tool
 extends CheckBox
 
+const Convert = preload("res://addons/librarian/scripts/convert.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 var cell_value = false:
     get: return button_pressed
-    set(value): button_pressed = Util.convert_to_bool(value)
+    set(value): button_pressed = Convert.to_bool(value)
 
 func set_cell_neighbor_left(neighbor: NodePath) -> void:
     focus_neighbor_left = neighbor

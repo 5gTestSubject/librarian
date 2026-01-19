@@ -2,16 +2,11 @@
 extends EditorPlugin
 
 const MessageBus = preload("res://addons/librarian/scripts/message_bus.gd")
-const Properties = preload("res://addons/librarian/properties.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 var main_screen_catalog: Control
 var library_dock: Control
 var table_dock: Control
-var settings := {}
-
-func _init() -> void:
-    _load_settings()
 
 func _enable_plugin() -> void:
     _register_message_bus()
@@ -47,18 +42,6 @@ func _make_visible(visible: bool) -> void:
     if main_screen_catalog:
         main_screen_catalog.visible = visible
 #endregion
-
-func _load_settings() -> void:
-    settings.clear()
-    for def in Properties.definitions:
-        var name = def["name"]
-        if not ProjectSettings.has_setting(name):
-            ProjectSettings.set_setting(name, def["default"])
-        ProjectSettings.set_initial_value(name, def["default"])
-        ProjectSettings.set_as_basic(name, def["basic"])
-        ProjectSettings.set_as_internal(name, def["internal"])
-        ProjectSettings.add_property_info(def)
-        settings[name] = ProjectSettings.get_setting(name)
 
 func _register_message_bus() -> void:
     # Autoloads are documented as being managed in _enable_plugin() and _disable_plugin().

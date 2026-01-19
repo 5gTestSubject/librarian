@@ -1,11 +1,12 @@
 @tool
 extends LineEdit
 
+const Convert = preload("res://addons/librarian/scripts/convert.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 var cell_value = "":
     get: return text
-    set(value): text = Util.convert_to_string(value)
+    set(value): text = Convert.to_text(value)
 
 func format(metadata: LibraryTableFieldInfo) -> void:
     placeholder_text = metadata.text_info.placeholder_text
