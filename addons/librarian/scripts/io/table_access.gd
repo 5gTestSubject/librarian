@@ -8,11 +8,11 @@
 
 const ltcsv = preload("res://addons/librarian/scripts/io/ltscv.gd")
 
-static func get_table_reader():
-    return ltcsv.get_table_reader()
+static func get_table_reader(table_path: String):
+    return ltcsv.get_table_reader(table_path)
 
-static func get_table_writer():
-    return ltcsv.get_table_writer()
+static func get_table_writer(table_path: String):
+    return ltcsv.get_table_writer(table_path)
 
 static func create_table(table_path: String, name: String) -> bool:
     return ltcsv.create_table(table_path, name)

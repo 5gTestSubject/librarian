@@ -4,12 +4,16 @@ extends RefCounted
 const Convert = preload("res://addons/librarian/scripts/convert.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
+var _file_path: String
 var _file: FileAccess
 
-func open(file_path: String, metadata: LibraryTableInfo) -> bool:
-    _file = FileAccess.open(file_path, FileAccess.WRITE)
+func _init(file_path: String):
+    _file_path = file_path
+
+func open(metadata: LibraryTableInfo) -> bool:
+    _file = FileAccess.open(_file_path, FileAccess.WRITE)
     if not _file:
-        printerr("Failed to open \"%s\". Code %s." % [file_path, FileAccess.get_open_error()])
+        printerr("Failed to open \"%s\". Code %s." % [_file_path, FileAccess.get_open_error()])
         return false
     _file.store_csv_line([JSON.stringify(metadata.to_dict())])
     return true
