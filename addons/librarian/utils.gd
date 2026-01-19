@@ -15,103 +15,12 @@ const COL_TYPEHINT_DECIMAL := &"Decimal"
 
 const MAIN_SCREEN_NAME = "Librarian"
 
-const CSV_FILE_EXTENSION := ".ltcsv"
-
 static func printwarn(msg: String) -> void:
     print_rich("[color=Yellow]%s[/color]" % msg)
 
 static func path_combine(path1: String, path2: String) -> String:
     return path1.trim_suffix("/") + "/" + path2.trim_prefix("/")
 
-#region Table Operations
-static func to_csv_filepath(table_path: String) -> String:
-    return path_combine(Properties.get_library_location(), table_path + CSV_FILE_EXTENSION)
-
-static func create_table_csv(table_path: String, name: String, description: String = "") -> bool:
-    var file_path := to_csv_filepath(table_path)
-    if FileAccess.file_exists(file_path):
-        return false
-    var metadata = LibraryTableInfo.new()
-    metadata.name = name
-    metadata.description = description
-    var file = FileAccess.open(file_path, FileAccess.WRITE)
-    file.store_csv_line([JSON.stringify(metadata.to_dict())])
-    file.flush()
-    file.close()
-    return true
-
-## Returns a 2-array containing the table metadata as LibraryTableInfo
-## and an iterator over the table rows.
-func load_table_csv(table_path: String) -> Array:
-    printerr("TODO load table")
-    return []
-
-static func save_table(table_path: String, metadata: LibraryTableInfo, row_data_iterator) -> bool:
-    if not metadata:
-        return false
-    var file_path := to_csv_filepath(table_path)
-    var file = FileAccess.open(file_path, FileAccess.WRITE)
-    file.store_csv_line([JSON.stringify(metadata.to_dict())])
-    for line in CsvSerializationIterator.new(row_data_iterator, convert_to_string):
-        file.store_csv_line(line)
-    file.flush()
-    file.close()
-    return true
-
-static func delete_table_csv(table_path: String) -> void:
-    DirAccess.remove_absolute(to_csv_filepath(table_path))
-
-static func parse_row(metadata: LibraryTableInfo, row: PackedStringArray) -> Array:
-    if row.size() == 0 or (row.size() == 1 and row[0] == ""): return []
-    var parsed_row := []
-    for i in range(metadata.fields.size()):
-        match metadata.fields[i].type:
-            COL_TYPE_BOOL:
-                parsed_row.push_back(bool(int(row[i])))
-            COL_TYPE_NUM:
-                parsed_row.push_back(float(row[i]))
-            COL_TYPE_STRING:
-                parsed_row.push_back(row[i])
-            _:
-                printwarn("Unrecognized column type %s. CSV value: %s"
-                    % [metadata.fields[i].type, row[i]])
-    return parsed_row
-#endregion
-
-#region Conversions
-static func convert_to_bool(value) -> bool:
-    match(typeof(value)):
-        TYPE_NIL: return false
-        TYPE_BOOL: return value
-        TYPE_INT: return bool(value)
-        TYPE_FLOAT: return bool(value)
-        TYPE_STRING:
-            if value.to_lower() == "false": return false
-            if value == "0": return false
-            return not value.is_empty()
-        _: return false
-
-static func convert_to_number(value) -> float:
-    match(typeof(value)):
-        TYPE_NIL: return 0.0
-        TYPE_BOOL: return 1.0 if value else 0.0
-        TYPE_INT: return float(value)
-        TYPE_FLOAT: return value
-        TYPE_STRING: return value.to_float()
-        _: return 0.0
-
-static func convert_to_string(value) -> String:
-    match typeof(value):
-        TYPE_NIL: return ""
-        # serialize bools as 1/0 instead of true/false
-        TYPE_BOOL:
-            return str(int(value))
-        # don't serialize the decimal points if unneeded
-        TYPE_FLOAT:
-            return str(int(value)) if int(value) == value else str(value)
-        _:
-            return str(value)
-#endregion
 
 #region Compare Metadata
 ## Returns a 3-array of the following structure.
@@ -165,87 +74,6 @@ static func _get_common_ids(left: Dictionary[int, LibraryTableFieldInfo], right:
 #endregion
 
 #region Iterators
-#region CSV
-## Converts an iteration of data rows to an iteration of CSV rows
-## CSV rows are defined by Godot as a PackedStringArray
-class CsvSerializationIterator extends RefCounted:
-    var row_iterator
-    var serialize: Callable
-
-    func _init(row_iterator, serialize: Callable):
-        self.row_iterator = row_iterator
-        self.serialize = serialize
-
-    func _iter_init(arg):
-        return row_iterator._iter_init(arg)
-
-    func _iter_next(arg):
-        return row_iterator._iter_next(arg)
-
-    func _iter_get(arg):
-        var arr = row_iterator._iter_get(arg)
-        var ret := PackedStringArray()
-        ret.resize(arr.size())
-        for i in range(arr.size()):
-            ret[i] = serialize.call(arr[i])
-        return ret
-
-    func has_remaining():
-        return row_iterator.has_remaining()
-
-## Converts an iteration of CSV rows to an iteration of data rows
-## CSV rows are defined by Godot as a PackedStringArray
-class CsvDeserializationIterator extends RefCounted:
-    var row_iterator
-    var deserialize: Callable
-
-    func _init(row_iterator, deserialize: Callable):
-        self.row_iterator = row_iterator
-        self.deserialize = deserialize
-
-    func _iter_init(_arg):
-        return row_iterator._iter_init(_arg)
-
-    func _iter_next(_arg):
-        return row_iterator._iter_next(_arg)
-
-    func _iter_get(_arg):
-        var raw_get = row_iterator._iter_get(_arg)
-        return deserialize.call(raw_get)
-
-class CsvFileIterator extends RefCounted:
-    var path: String
-    var _file: FileAccess
-    var _curr_row: PackedStringArray
-
-    func _init(path: String):
-        self.path = path
-        _curr_row = PackedStringArray()
-
-    func _iter_init(_arg):
-        if _file:
-            _file.close()
-        _file = FileAccess.open(path, FileAccess.READ)
-        _curr_row = _file.get_csv_line()
-        return has_remaining()
-
-    func _iter_next(_arg):
-        _curr_row = _file.get_csv_line()
-        return has_remaining()
-
-    func _iter_get(_arg):
-        return _curr_row
-    
-    func has_remaining() -> bool:
-        match _curr_row.size():
-            0:
-                return false
-            1:
-                return not _curr_row[0].is_empty()
-            _:
-                return true
-#endregion
-
 #region GridContainer
 class GridContainerColIterator extends RefCounted:
     var grid_container: GridContainer
