@@ -2,6 +2,7 @@
 
 const Properties = preload("res://addons/librarian/properties.gd")
 const Util = preload("res://addons/librarian/utils.gd")
+const UUID = preload("res://addons/librarian/scripts/uuid.gd")
 
 const LTCSV_FILE_EXTENSION := ".ltcsv"
 
@@ -19,6 +20,7 @@ static func create_table(table_path: String, name: String) -> bool:
     if FileAccess.file_exists(file_path):
         return false
     var metadata = LibraryTableInfo.new()
+    metadata.id = UUID.v4()
     metadata.name = name
     var writer = get_table_writer(table_path)
     writer.open(metadata)
