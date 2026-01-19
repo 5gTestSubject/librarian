@@ -103,7 +103,7 @@ func _on_spreadsheets_tab_bar_button_pressed(tab: int) -> void:
     %SpreadsheetsTabBar.remove_tab(tab)
 
 func _on_spreadsheets_tab_bar_active_tab_rearranged(_idx_to:int) -> void:
-    var ids: Array[int] = []
+    var ids: Array[StringName] = []
     ids.resize(%SpreadsheetsTabBar.tab_count)
     for i in range(%SpreadsheetsTabBar.tab_count):
         ids[i] = %SpreadsheetsTabBar.get_tab_metadata(i)["table_metadata"].id
@@ -127,7 +127,7 @@ func _on_delete_selected_rows_button_pressed() -> void:
     for row_idx in checked_rows:
         message_bus().row_deleted.emit(_get_active_spreadsheet_metadata().id, row_idx)
 
-func _on_row_select_updated(_table_id: int, _selected_row_count: int) -> void:
+func _on_row_select_updated(_table_id: StringName, _selected_row_count: int) -> void:
     _evaluate_active_controls()
 
 func _shortcut_input(event: InputEvent) -> void:

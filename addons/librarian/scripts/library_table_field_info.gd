@@ -1,9 +1,11 @@
 @tool
 class_name LibraryTableFieldInfo extends Resource
 
+const ZERO_UUID := &"00000000-0000-0000-0000-000000000000"
+
 const Util = preload("res://addons/librarian/utils.gd")
 
-@export var id := -1
+@export var id := ZERO_UUID
 @export var name := ""
 @export var description := ""
 @export var type := Util.COL_TYPE_BOOL
@@ -49,7 +51,7 @@ func to_dict() -> Dictionary:
 
 static func from_dict(raw: Dictionary) -> LibraryTableFieldInfo:
     var field = LibraryTableFieldInfo.new()
-    field.id = raw.get("id", -1)
+    field.id = raw.get("id", ZERO_UUID)
     field.name = raw.get("name", "")
     field.description = raw.get("description", "")
     field.type = raw.get("type", Util.COL_TYPE_BOOL)
