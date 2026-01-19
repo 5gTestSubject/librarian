@@ -63,4 +63,10 @@ Go to project settings and enable the plugin. This will create a new main screen
 
 This project licensed under the MIT License.
 
+## Credits
+
+Thank you to all the maintainers of the following projects.
+
 [Directory Watcher](https://github.com/KoBeWi/Godot-Directory-Watcher) by [Tomasz Chabora](https://github.com/KoBeWi) used under MIT License.
+
+[Godot UUID](https://github.com/binogure-studio/godot-uuid) by [Binogure Studio](https://github.com/binogure-studio) used under MIT License.
