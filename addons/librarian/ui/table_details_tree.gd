@@ -14,7 +14,8 @@ const DELETE_FIELD_BUTTON_ID := 1
 const FIELD_TYPE_DROPDOWN: PackedStringArray = [
     Util.COL_TYPE_BOOL,
     Util.COL_TYPE_NUM,
-    Util.COL_TYPE_STRING 
+    Util.COL_TYPE_STRING,
+    Util.COL_TYPE_COLOR,
 ]
 const NUMBER_TYPE_DROPDOWN: PackedStringArray = [
     Util.COL_TYPEHINT_INTEGER,
@@ -37,6 +38,7 @@ var _table_fields_root: TreeItem
 @export var _int_icon: Texture2D
 @export var _float_icon: Texture2D
 @export var _string_icon: Texture2D
+@export var _color_icon: Texture2D
 
 func _ready() -> void:
     message_bus().field_updated.connect(func(_id, _idx): refresh())
@@ -110,6 +112,9 @@ func _refresh_field(field_idx: int, field_item: TreeItem) -> void:
             type_item.set_range(COL_FIELD_PROP_VALUE, 2)
             field_item.set_icon(COL_FIELD_NAME, _string_icon)
             _refresh_text_properties(field_idx, field_item)
+        Util.COL_TYPE_COLOR:
+            type_item.set_range(COL_FIELD_PROP_VALUE, 3)
+            field_item.set_icon(COL_FIELD_NAME, _color_icon)
 
 func _refresh_number_properties(field_idx: int, field_item: TreeItem) -> void:
     var field = metadata.fields[field_idx]

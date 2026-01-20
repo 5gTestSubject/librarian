@@ -35,6 +35,8 @@ func read() -> Array:
                 result[i] = Convert.to_number(result[i])
             Util.COL_TYPE_STRING:
                 result[i] = Convert.to_text(result[i])
+            Util.COL_TYPE_COLOR:
+                result[i] = Convert.to_color(result[i])
             _:
                 result[i] = false
     return result

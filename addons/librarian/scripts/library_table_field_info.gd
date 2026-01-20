@@ -19,6 +19,7 @@ func get_default_value() -> Variant:
         Util.COL_TYPE_BOOL: return false
         Util.COL_TYPE_NUM: return 0.0
         Util.COL_TYPE_STRING: return ""
+        Util.COL_TYPE_COLOR: return Color.WHITE
     return null
 
 func equivalent_to(other: LibraryTableFieldInfo) -> bool:

@@ -17,8 +17,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -49.0
+offset_right = 392.0
+offset_bottom = 151.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -50,13 +50,15 @@ text = "Type:"
 unique_name_in_owner = true
 layout_mode = 2
 selected = 1
-item_count = 3
+item_count = 4
 popup/item_0/text = "Flag"
 popup/item_0/id = 0
 popup/item_1/text = "Number"
 popup/item_1/id = 1
 popup/item_2/text = "Text"
 popup/item_2/id = 2
+popup/item_3/text = "Color"
+popup/item_3/id = 3
 
 [connection signal="canceled" from="." to="." method="_on_canceled"]
 [connection signal="confirmed" from="." to="." method="_on_confirmed"]

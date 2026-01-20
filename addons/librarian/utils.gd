@@ -7,6 +7,7 @@ const MAX_INT := 2147483647
 const COL_TYPE_BOOL := &"bool"
 const COL_TYPE_NUM := &"number"
 const COL_TYPE_STRING := &"string"
+const COL_TYPE_COLOR := &"color"
 
 const COL_TYPEHINT_LINE_EDIT := &"LineEdit"
 const COL_TYPEHINT_TEXT_EDIT := &"TextEdit"

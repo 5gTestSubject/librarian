@@ -10,6 +10,7 @@ static func to_bool(value) -> bool:
             if value.to_lower() == "false": return false
             if value == "0": return false
             return not value.is_empty()
+        TYPE_COLOR: return false
         _: return false
 
 static func to_number(value) -> float:
@@ -19,6 +20,7 @@ static func to_number(value) -> float:
         TYPE_INT: return float(value)
         TYPE_FLOAT: return value
         TYPE_STRING: return value.to_float()
+        TYPE_COLOR: return 0.0
         _: return 0.0
 
 static func to_text(value) -> String:
@@ -30,5 +32,21 @@ static func to_text(value) -> String:
         # don't serialize the decimal points if unneeded
         TYPE_FLOAT:
             return str(int(value)) if int(value) == value else str(value)
+        TYPE_COLOR:
+            return value.to_html()
         _:
             return str(value)
+
+static func to_color(value) -> Color:
+    match(typeof(value)):
+        TYPE_NIL: return Color.WHITE
+        TYPE_BOOL: return Color.WHITE
+        TYPE_INT: return Color.WHITE
+        TYPE_FLOAT: return Color.WHITE
+        TYPE_STRING:
+            if Color.html_is_valid(value):
+                return Color.html(value)
+            else:
+                return Color.WHITE
+        TYPE_COLOR: return value
+        _: return Color.WHITE
