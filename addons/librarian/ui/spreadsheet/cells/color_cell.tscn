@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://clws1643n4p1b"]
+
+[ext_resource type="PackedScene" uid="uid://bgor1ye1gg5go" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.tscn" id="1_olyvf"]
+[ext_resource type="Script" uid="uid://c3ispx8nlurrk" path="res://addons/librarian/ui/spreadsheet/cells/color_cell.gd" id="2_mbm2r"]
+
+[node name="CellBase" instance=ExtResource("1_olyvf")]
+
+[node name="ColorCell" type="ColorPickerButton" parent="." index="0"]
+custom_minimum_size = Vector2(40, 20)
+layout_mode = 2
+script = ExtResource("2_mbm2r")
