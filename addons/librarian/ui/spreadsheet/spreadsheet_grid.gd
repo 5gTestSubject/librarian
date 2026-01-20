@@ -129,6 +129,8 @@ func _get_cell_scene(column_index: int) -> Control:
                 .instantiate()
             cell.get_inner().format(info)
             return cell
+        Util.COL_TYPE_COLOR:
+            return preload("res://addons/librarian/ui/spreadsheet/cells/color_cell.tscn").instantiate()
     var wrn := "Failed to parse column type \"%s\" of \"%s\"(row:%d)" % [info.type, info["name"], column_index]
     var placeholder := Label.new()
     placeholder.text = "ERROR"

@@ -23,6 +23,7 @@ func _on_confirmed() -> void:
         0: type = Util.COL_TYPE_BOOL
         1: type = Util.COL_TYPE_NUM
         2: type = Util.COL_TYPE_STRING
+        3: type = Util.COL_TYPE_COLOR
         _: printerr("Bad column type.")
     new_field.emit(%NameEdit.text, %DescriptionEdit.text, type)
     queue_free()

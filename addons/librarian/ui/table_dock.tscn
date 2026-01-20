@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://shai2itvmcq3"]
+[gd_scene load_steps=10 format=3 uid="uid://shai2itvmcq3"]
 
 [ext_resource type="Script" uid="uid://c0oygbhacdvvn" path="res://addons/librarian/ui/table_details_tree.gd" id="1_3chck"]
 [ext_resource type="Script" uid="uid://bix4bicqhyeuj" path="res://addons/librarian/ui/table_dock.gd" id="1_nnlfq"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://cmbnarxnn36yl" path="res://addons/librarian/res/icons/godot/int.svg" id="6_kgypr"]
 [ext_resource type="Texture2D" uid="uid://mqm4irirmbn6" path="res://addons/librarian/res/icons/godot/float.svg" id="7_swwy3"]
 [ext_resource type="Texture2D" uid="uid://di781jvh4tq08" path="res://addons/librarian/res/icons/godot/String.svg" id="8_cxxl2"]
+[ext_resource type="Texture2D" uid="uid://fpbhbtq00iqb" path="res://addons/librarian/res/icons/godot/Color.svg" id="9_kgypr"]
 
 [node name="Table" type="PanelContainer"]
 anchors_preset = 15
@@ -41,6 +42,7 @@ _bool_icon = ExtResource("5_wvlsc")
 _int_icon = ExtResource("6_kgypr")
 _float_icon = ExtResource("7_swwy3")
 _string_icon = ExtResource("8_cxxl2")
+_color_icon = ExtResource("9_kgypr")
 
 [connection signal="pressed" from="VBoxContainer/TopBar/NewFieldButton" to="." method="_on_new_field_button_pressed"]
 [connection signal="button_clicked" from="VBoxContainer/TableDetailsTree" to="VBoxContainer/TableDetailsTree" method="_on_button_clicked"]
