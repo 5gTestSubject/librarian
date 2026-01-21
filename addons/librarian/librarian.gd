@@ -1,21 +1,22 @@
 @tool
 extends EditorPlugin
 
-const MessageBus = preload("res://addons/librarian/scripts/message_bus.gd")
-const Util = preload("res://addons/librarian/utils.gd")
+const LibraryInfo := preload("res://addons/librarian/scripts/library_info.gd")
+const MessageBus := preload("res://addons/librarian/scripts/message_bus.gd")
+const Util := preload("res://addons/librarian/utils.gd")
 
 var main_screen_catalog: Control
 var library_dock: Control
 var table_dock: Control
 
 func _enable_plugin() -> void:
-    _register_message_bus()
+    _register_autoloads()
 
 func _disable_plugin() -> void:
-    remove_autoload_singleton(MessageBus.AUTOLOAD_NAME)
+    _remove_autoloads()
 
 func _enter_tree() -> void:
-    _register_message_bus()
+    _register_autoloads()
     main_screen_catalog = load("res://addons/librarian/ui/main_screen.tscn").instantiate()
     library_dock = load("res://addons/librarian/ui/library_dock.tscn").instantiate()
     table_dock = load("res://addons/librarian/ui/table_dock.tscn").instantiate()
@@ -43,7 +44,22 @@ func _make_visible(visible: bool) -> void:
         main_screen_catalog.visible = visible
 #endregion
 
-func _register_message_bus() -> void:
+#region Autoloads
+func _register_autoloads() -> void:
+    _register_autoload(
+        MessageBus.AUTOLOAD_NAME,
+        MessageBus.AUTOLOAD_NODE_PATH,
+        "res://addons/librarian/scripts/message_bus.gd")
+    _register_autoload(
+        LibraryInfo.AUTOLOAD_NAME,
+        LibraryInfo.AUTOLOAD_NODE_PATH,
+        "res://addons/librarian/scripts/library_info.gd")
+
+func _remove_autoloads() -> void:
+    remove_autoload_singleton(LibraryInfo.AUTOLOAD_NAME)
+    remove_autoload_singleton(MessageBus.AUTOLOAD_NAME)
+
+func _register_autoload(name: String, path: NodePath, script_path: String) -> void:
     # Autoloads are documented as being managed in _enable_plugin() and _disable_plugin().
     # These methods are not called before _enter_tree(), which sets up the GUI screens for the editor.
     # If any of those GUI scenes need access to that autoload, they will fail to find it when the plugin is enabled.
@@ -52,5 +68,6 @@ func _register_message_bus() -> void:
     # every editor startup. So we check to see if the node already exists in the editor's scene tree and register
     # the autoload if it doesn't. It seems to be guaranteed the existing autoloads will already be present before
     # this plugin enters the tree.
-    if not get_node_or_null(MessageBus.AUTOLOAD_NODE_PATH):
-        add_autoload_singleton(MessageBus.AUTOLOAD_NAME, "res://addons/librarian/scripts/message_bus.gd")
+    if not get_node_or_null(path):
+        add_autoload_singleton(name, script_path)
+#endregion

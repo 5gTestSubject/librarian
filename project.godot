@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 LibrarianMessageBus="*res://addons/librarian/scripts/message_bus.gd"
+LibraryInfo="*res://addons/librarian/scripts/library_info.gd"
 
 [editor_plugins]
 
