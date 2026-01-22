@@ -4,22 +4,29 @@ extends GridContainer
 func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
 const Util = preload("res://addons/librarian/utils.gd")
-const title_cell_scene = preload("res://addons/librarian/ui/spreadsheet/cells/column_title.tscn")
+const TITLE_CELL_SCENE = preload("res://addons/librarian/ui/spreadsheet/cells/column_title.tscn")
 
 ## Extra columns for numbering rows and giving them checkboxes.
-const extra_columns := 2
+const EXTRA_COLS := 2
 ## One extra row for titleing columns.
-const extra_rows := 1
+const EXTRA_ROWS := 1
 
-const row_checkbox_column_index := 0
+const ROW_CHECKBOX_COL_IDX := 0
+const ROW_NUM_COL_IDX := 1
 
 ## Columns of the logical spreadsheet, not the grid container.
 ## Grid container maintains an extra column to number rows with.
 var spreadsheet_columns: int:
-    get: return columns - extra_columns
-    set(value): columns = value + extra_columns
+    get: return columns - _extra_columns
+    set(value): columns = value + _extra_columns
 
 @export var _metadata: LibraryTableInfo
+
+var _extra_columns: int:
+    get: return EXTRA_COLS - int(_hide_row_checkboxes) - int(_hide_row_nums)
+var _hide_row_checkboxes := false
+var _hide_row_nums := false
+var _hidden_field_idxs := {}
 
 func _ready() -> void:
     message_bus().field_updated.connect(_on_field_updated)
@@ -34,23 +41,23 @@ func reset_table(metadata: LibraryTableInfo) -> void:
     clear_grid(true)
     _metadata = metadata
     spreadsheet_columns = metadata.fields.size()
-    for _i in range(extra_columns):
+    for _i in range(_extra_columns):
         add_child(Control.new())
     for field in _metadata.fields:
-        var title = title_cell_scene.instantiate()
+        var title = TITLE_CELL_SCENE.instantiate()
         add_child(title)
         title.cell_value = field.name
 
 func refresh_focus_neighbors() -> void:
     # skip non-cell rows
-    for i in range(columns * extra_rows, get_child_count()):
+    for i in range(columns * EXTRA_ROWS, get_child_count()):
         # skip non-cell columns
-        if 0 <= i % columns and i % columns < extra_columns:
+        if 0 <= i % columns and i % columns < _extra_columns:
             continue
         var cell = get_child(i)
-        var is_left_edge = i % columns == extra_columns
+        var is_left_edge = i % columns == _extra_columns
         var is_right_edge = (i+1) % columns == 0
-        var is_top_edge = i - columns < extra_rows * columns
+        var is_top_edge = i - columns < EXTRA_ROWS * columns
         var is_bottom_edge = i + columns >= get_child_count()
 
         cell.set_cell_neighbor_left(cell.get_path() if is_left_edge else get_child(i-1).get_path())
@@ -61,14 +68,14 @@ func refresh_focus_neighbors() -> void:
         if is_right_edge and is_bottom_edge:
             cell.set_cell_next(cell.get_path())
         elif is_right_edge:
-            cell.set_cell_next(get_child(i + 1 + extra_columns).get_path())
+            cell.set_cell_next(get_child(i + 1 + _extra_columns).get_path())
         else:
             cell.set_cell_next(get_child(i + 1).get_path())
 
         if is_left_edge and is_top_edge:
             cell.set_cell_previous(cell.get_path())
         elif is_left_edge:
-            cell.set_cell_previous(get_child(i - extra_columns - 1).get_path())
+            cell.set_cell_previous(get_child(i - _extra_columns - 1).get_path())
         else:
             cell.set_cell_previous(get_child(i - 1).get_path())
 
@@ -88,33 +95,67 @@ func add_row(data: Array, row_idx: int = -1) -> void:
             cell.cell_value = data[i]
 
     if row_idx >= 0:
-        var insert_idx = (row_idx + extra_rows) * columns
+        var insert_idx = (row_idx + EXTRA_ROWS) * columns
         for i in range(columns):
             move_child(get_child(get_child_count() - columns + i), insert_idx + i)
 
     refresh_focus_neighbors()
 
 func get_spreadsheet_row_count() -> int:
-    return (get_child_count() / columns) - extra_rows
+    return (get_child_count() / columns) - EXTRA_ROWS
 
 func get_spreadsheet_cell_count() -> int:
     return get_spreadsheet_row_count() * spreadsheet_columns
 
+#region Hidden Columns
+# TODO GridContainer iterators broken. They can't account for hidden columns.
+func set_checkbox_visibility(visible: bool) -> void:
+    _hide_row_checkboxes = not visible
+    for control in Util.ChildIterator.new(self, ROW_CHECKBOX_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+        control.visible = visible
+    _adjust_grid_container_columns()
+
+func set_row_num_visibility(visible: bool) -> void:
+    _hide_row_nums = not visible
+    for control in Util.ChildIterator.new(self, ROW_NUM_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+        control.visible = visible
+    _adjust_grid_container_columns()
+
+func set_field_visibility(field_idx: int, visible: bool) -> void:
+    if visible:
+        _hidden_field_idxs.erase(field_idx)
+    else:
+        _hidden_field_idxs[field_idx] = null
+    for control in Util.ChildIterator.new(self, EXTRA_COLS + field_idx, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+        control.visible = visible
+    _adjust_grid_container_columns()
+
+func _adjust_grid_container_columns() -> void:
+    columns = _metadata.fields.size() - _hidden_field_idxs.size() + int(not _hide_row_checkboxes) + int(not _hide_row_nums)
+#endregion
+
 #region Iteration
 func iter_field(field_idx: int):
+    if not _metadata:
+        return []
     return Util.MapIterator.new(
-        Util.GridContainerColIterator.new(self, extra_columns + field_idx, extra_rows, Util.MAX_INT),
+        Util.ChildIterator.new(self, EXTRA_COLS + _metadata.fields.size() + EXTRA_COLS + field_idx, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()),
         func(cell): return cell.cell_value)
 
 func iter_checkboxes():
-    return Util.GridContainerColIterator.new(self, 0, 1)
+    if not _metadata:
+        return []
+    return Util.ChildIterator.new(self, EXTRA_COLS + _metadata.fields.size() + ROW_CHECKBOX_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size())
 
 func iter_entries():
+    if not _metadata:
+        return []
     return Util.MapIterator.new(
-        Util.GridContainerRowIterator.new(self, extra_columns, Util.MAX_INT, extra_rows, Util.MAX_INT),
-        func(cell_row): return cell_row.map(func(cell): return cell.cell_value))
+        Util.ChildBatchIterator.new(self, EXTRA_COLS + _metadata.fields.size(), EXTRA_COLS + _metadata.fields.size()),
+        func(cell_row): return cell_row.slice(EXTRA_COLS).map(func(cell): return cell.cell_value))
 #endregion
 
+#region Construct Cells
 func _get_cell_scene(column_index: int) -> Control:
     var info := _metadata.fields[column_index]
     match info.type:
@@ -139,10 +180,11 @@ func _get_cell_scene(column_index: int) -> Control:
     return placeholder
 
 func _get_leading_cells(row_num: int) -> Array[Control]:
-    var result : Array[Control] = [CheckBox.new(), title_cell_scene.instantiate()]
+    var result : Array[Control] = [CheckBox.new(), TITLE_CELL_SCENE.instantiate()]
     result[1].cell_value = str(row_num)
     result[0].toggled.connect(_on_row_checked)
     return result
+#endregion
 
 func get_checked_rows_count() -> int:
     var count := 0
@@ -207,7 +249,7 @@ func _get_focused_cell_root_or_null() -> Control:
 func _on_field_updated(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(columns + extra_columns + field_idx, get_child_count(), columns):
+    for i in range(columns + _extra_columns + field_idx, get_child_count(), columns):
         var old_cell = get_child(i)
         var cell_value = old_cell.cell_value
         var new_cell = _get_cell_scene(field_idx)
@@ -222,14 +264,14 @@ func _on_field_added(table_id: StringName, field_idx: int) -> void:
         return
     var total_rows = get_spreadsheet_row_count()
     columns += 1
-    var title = title_cell_scene.instantiate()
+    var title = TITLE_CELL_SCENE.instantiate()
     add_child(title)
-    move_child(title, field_idx + extra_columns)
+    move_child(title, field_idx + _extra_columns)
     title.cell_value = _metadata.fields[field_idx].name
     for i in range(total_rows):
         var cell = _get_cell_scene(field_idx)
         add_child(cell)
-        move_child(cell, ((i + extra_rows) * columns) + field_idx + extra_columns)
+        move_child(cell, ((i + EXTRA_ROWS) * columns) + field_idx + _extra_columns)
 
 func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
@@ -243,7 +285,7 @@ func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
 func _on_field_moved(table_id: StringName, previous_field_idx: int, new_field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(extra_columns, get_child_count(), columns):
+    for i in range(_extra_columns, get_child_count(), columns):
         var child = get_child(i + previous_field_idx)
         move_child(child, i + new_field_idx)
 
@@ -255,7 +297,7 @@ func _on_row_added(table_id: StringName, row_idx: int) -> void:
 func _on_row_deleted(table_id: StringName, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    var cell_idx := (extra_rows + row_idx) * columns
+    var cell_idx := (EXTRA_ROWS + row_idx) * columns
     for _i in range(columns):
         var child = get_child(cell_idx)
         remove_child(child)

@@ -75,71 +75,58 @@ static func _get_common_ids(left: Dictionary[StringName, LibraryTableFieldInfo],
 #endregion
 
 #region Iterators
-#region GridContainer
-class GridContainerColIterator extends RefCounted:
-    var grid_container: GridContainer
-    var begin_row: int
-    var end_row: int
-    var row_idx: int
-    var col_idx: int
+class ChildIterator extends RefCounted:
+    var _parent: Node
+    var _range_start: int
+    var _range_end: int
+    var _step: int
+    var _include_internal: bool
 
-    func _init(grid_container: GridContainer, col_idx: int, begin_row: int = 0, end_row: int = MAX_INT):
-        self.grid_container = grid_container
-        self.begin_row = begin_row
-        self.end_row = end_row
-        self.row_idx = begin_row
-        self.col_idx = col_idx
+    func _init(parent: Node, range_start: int = 0, range_end: int = MAX_INT, step: int = 1, include_internal: bool = false) -> void:
+        _parent = parent
+        _range_start = range_start
+        _range_end = range_end
+        _step = step
+        _include_internal = include_internal
 
-    func _iter_init(_arg) -> bool:
-        row_idx = begin_row
-        return has_remaining()
+    func _iter_init(iter: Array) -> bool:
+        iter[0] = _range_start
+        return iter[0] < _range_end and iter[0] < _parent.get_child_count(_include_internal)
 
-    func _iter_next(_arg) -> bool:
-        row_idx += 1
-        return has_remaining()
+    func _iter_next(iter: Array) -> bool:
+        iter[0] += _step
+        return iter[0] < _range_end and iter[0] < _parent.get_child_count(_include_internal)
 
-    func _iter_get(_arg) -> Variant:
-        return grid_container.get_child(row_idx * grid_container.columns + col_idx)
+    func _iter_get(iter: Variant) -> Variant:
+        return _parent.get_child(iter, _include_internal)
 
-    func has_remaining() -> bool:
-        return row_idx * grid_container.columns + col_idx < grid_container.get_child_count()
+class ChildBatchIterator extends RefCounted:
+    var _parent: Node
+    var _batch_size: int
+    var _range_start: int
+    var _range_end: int
+    var _include_internal: bool
 
-class GridContainerRowIterator extends RefCounted:
-    var grid_container: GridContainer
-    var row_slice_start: int
-    var row_slice_end: int
-    var begin_row: int
-    var end_row: int
-    var row_idx: int
+    func _init(parent: Node, batch_size: int, range_start: int = 0, range_end: int = MAX_INT, include_internal: bool = false) -> void:
+        _parent = parent
+        _batch_size = batch_size
+        _range_start = range_start
+        _range_end = range_end
+        _include_internal = include_internal
 
-    func _init(grid_container: GridContainer, row_slice_start: int = 0, row_slice_end: int = MAX_INT, begin_row: int = 0, end_row: int = MAX_INT):
-        self.grid_container = grid_container
-        self.row_slice_start = row_slice_start
-        self.row_slice_end = row_slice_end
-        self.begin_row = begin_row
-        self.end_row = end_row
-        self.row_idx = begin_row
+    func _iter_init(iter: Array) -> bool:
+        iter[0] = _range_start
+        return iter[0] < _range_end and iter[0] < _parent.get_child_count(_include_internal)
 
-    func _iter_init(_arg) -> bool:
-        row_idx = begin_row
-        return has_remaining()
+    func _iter_next(iter: Array) -> bool:
+        iter[0] += _batch_size
+        return iter[0] < _range_end and iter[0] < _parent.get_child_count(_include_internal)
 
-    func _iter_next(_arg) -> bool:
-        row_idx += 1
-        return has_remaining()
-
-    func _iter_get(_arg) -> Variant:
-        var row_size = min(row_slice_end - row_slice_start, grid_container.columns - row_slice_start)
-        row_size = min(row_size, grid_container.get_child_count() - (row_idx * grid_container.columns) - row_slice_start)
-        var result := []
-        result.resize(row_size)
-        for i in range(0, row_size):
-            result[i] = grid_container.get_child(row_idx * grid_container.columns + row_slice_start + i)
-        return result
-
-    func has_remaining() -> bool:
-        return row_idx * grid_container.columns + row_slice_start < grid_container.get_child_count()
-#endregion
+    func _iter_get(iter: Variant) -> Variant:
+        var batch: Array[Node] = []
+        for i in range(0, min(_batch_size, _parent.get_child_count() - iter)):
+            batch[i] = _parent.get_child(iter + i)
+        return batch
 
 class EnumerateIterator extends RefCounted:
     var iterator
