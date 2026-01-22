@@ -58,6 +58,8 @@ func add_row(data: Array) -> void:
         add_child(cell)
         if i < data.size():
             cell.cell_value = data[i]
+        if _hidden_field_idxs.has(i):
+            cell.visible = false
 
 func get_spreadsheet_row_count() -> int:
     return (get_child_count() / get_spreadsheet_width()) - EXTRA_ROWS
