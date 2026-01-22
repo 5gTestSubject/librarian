@@ -123,8 +123,10 @@ class ChildBatchIterator extends RefCounted:
         return iter[0] < _range_end and iter[0] < _parent.get_child_count(_include_internal)
 
     func _iter_get(iter: Variant) -> Variant:
+        var batch_size := min(_batch_size, _parent.get_child_count() - iter)
         var batch: Array[Node] = []
-        for i in range(0, min(_batch_size, _parent.get_child_count() - iter)):
+        batch.resize(batch_size)
+        for i in range(0, batch_size):
             batch[i] = _parent.get_child(iter + i)
         return batch
 
