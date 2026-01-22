@@ -42,7 +42,7 @@ var _table_fields_root: TreeItem
 
 func _ready() -> void:
     message_bus().field_updated.connect(func(_id, _idx): refresh())
-    message_bus().field_added.connect(func(_id, _idx): refresh())
+    message_bus().field_added.connect(func(_id): refresh())
     message_bus().field_deleted.connect(func(_id, _idx): refresh())
     message_bus().field_moved.connect(func(_id, _old_idx, _new_idx): refresh())
     _root = create_item()

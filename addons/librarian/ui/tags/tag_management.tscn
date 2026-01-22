@@ -1,0 +1,126 @@
+[gd_scene load_steps=21 format=3 uid="uid://b6wdmigpepypt"]
+
+[ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="1_3iwbi"]
+[ext_resource type="Script" uid="uid://dn7e23wrh0x42" path="res://addons/librarian/ui/tags/tag_management.gd" id="1_a3cxd"]
+[ext_resource type="PackedScene" uid="uid://c26oix342rfcb" path="res://addons/librarian/ui/spreadsheet/spreadsheet_grid.tscn" id="2_wfr7g"]
+[ext_resource type="Script" uid="uid://dyc6disjps6e7" path="res://addons/librarian/scripts/library_table_field_info.gd" id="3_a3cxd"]
+[ext_resource type="Script" uid="uid://dftecskc8dfy6" path="res://addons/librarian/scripts/library_table_number_field_info.gd" id="4_8kglx"]
+[ext_resource type="Script" uid="uid://i68t57nw4njh" path="res://addons/librarian/scripts/library_table_text_field_info.gd" id="5_p7ak1"]
+[ext_resource type="Script" uid="uid://bjg2nexvkhxdm" path="res://addons/librarian/scripts/library_table_info.gd" id="6_d5klo"]
+
+[sub_resource type="Resource" id="Resource_a3cxd"]
+script = ExtResource("4_8kglx")
+type = &"Integer"
+arrow_step = 0.01
+
+[sub_resource type="Resource" id="Resource_8kglx"]
+script = ExtResource("5_p7ak1")
+placeholder_text = ""
+
+[sub_resource type="Resource" id="Resource_p7ak1"]
+script = ExtResource("3_a3cxd")
+id = &"00000000-0000-0000-0000-000000000000"
+name = "ID"
+description = ""
+type = &"string"
+optional = false
+number_info = SubResource("Resource_a3cxd")
+text_info = SubResource("Resource_8kglx")
+metadata/_custom_type_script = "uid://dyc6disjps6e7"
+
+[sub_resource type="Resource" id="Resource_kipfu"]
+script = ExtResource("4_8kglx")
+type = &"Integer"
+arrow_step = 0.01
+
+[sub_resource type="Resource" id="Resource_2idau"]
+script = ExtResource("5_p7ak1")
+placeholder_text = ""
+
+[sub_resource type="Resource" id="Resource_ivmpo"]
+script = ExtResource("3_a3cxd")
+id = &"00000000-0000-0000-0000-000000000000"
+name = "Name"
+description = ""
+type = &"string"
+optional = false
+number_info = SubResource("Resource_kipfu")
+text_info = SubResource("Resource_2idau")
+metadata/_custom_type_script = "uid://dyc6disjps6e7"
+
+[sub_resource type="Resource" id="Resource_k6o3s"]
+script = ExtResource("4_8kglx")
+type = &"Integer"
+arrow_step = 0.01
+
+[sub_resource type="Resource" id="Resource_mpapc"]
+script = ExtResource("5_p7ak1")
+placeholder_text = ""
+
+[sub_resource type="Resource" id="Resource_q88ee"]
+script = ExtResource("3_a3cxd")
+id = &"00000000-0000-0000-0000-000000000000"
+name = "Description"
+description = ""
+type = &"string"
+optional = false
+number_info = SubResource("Resource_k6o3s")
+text_info = SubResource("Resource_mpapc")
+metadata/_custom_type_script = "uid://dyc6disjps6e7"
+
+[sub_resource type="Resource" id="Resource_qvk2i"]
+script = ExtResource("4_8kglx")
+type = &"Integer"
+arrow_step = 0.01
+
+[sub_resource type="Resource" id="Resource_d4aqi"]
+script = ExtResource("5_p7ak1")
+placeholder_text = ""
+
+[sub_resource type="Resource" id="Resource_ck18x"]
+script = ExtResource("3_a3cxd")
+id = &"00000000-0000-0000-0000-000000000000"
+name = "Color"
+description = ""
+type = &"color"
+optional = false
+number_info = SubResource("Resource_qvk2i")
+text_info = SubResource("Resource_d4aqi")
+metadata/_custom_type_script = "uid://dyc6disjps6e7"
+
+[sub_resource type="Resource" id="Resource_jdqtj"]
+script = ExtResource("6_d5klo")
+id = &"00000000-0000-0000-0000-000000000000"
+name = "Tags"
+description = ""
+fields = Array[ExtResource("3_a3cxd")]([SubResource("Resource_p7ak1"), SubResource("Resource_ivmpo"), SubResource("Resource_q88ee"), SubResource("Resource_ck18x")])
+metadata/_custom_type_script = "uid://bjg2nexvkhxdm"
+
+[node name="TagManagement" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a3cxd")
+tag_table_metadata = SubResource("Resource_jdqtj")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="."]
+layout_mode = 2
+
+[node name="NewTagButton" type="Button" parent="HFlowContainer"]
+layout_mode = 2
+text = "New Tag"
+icon = ExtResource("1_3iwbi")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Spreadsheet" parent="ScrollContainer" instance=ExtResource("2_wfr7g")]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 5
+_metadata = SubResource("Resource_jdqtj")
+
+[connection signal="pressed" from="HFlowContainer/NewTagButton" to="." method="_on_new_tag_button_pressed"]
