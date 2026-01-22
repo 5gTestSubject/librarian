@@ -14,16 +14,8 @@ const EXTRA_ROWS := 1
 const ROW_CHECKBOX_COL_IDX := 0
 const ROW_NUM_COL_IDX := 1
 
-## Columns of the logical spreadsheet, not the grid container.
-## Grid container maintains an extra column to number rows with.
-var spreadsheet_columns: int:
-    get: return columns - _extra_columns
-    set(value): columns = value + _extra_columns
-
 @export var _metadata: LibraryTableInfo
 
-var _extra_columns: int:
-    get: return EXTRA_COLS - int(_hide_row_checkboxes) - int(_hide_row_nums)
 var _hide_row_checkboxes := false
 var _hide_row_nums := false
 var _hidden_field_idxs := {}
@@ -38,86 +30,60 @@ func _ready() -> void:
     message_bus().row_moved.connect(_on_row_moved)
 
 func reset_table(metadata: LibraryTableInfo) -> void:
-    clear_grid(true)
+    clear_grid()
     _metadata = metadata
-    spreadsheet_columns = metadata.fields.size()
-    for _i in range(_extra_columns):
+    if not _metadata:
+        return
+    _adjust_grid_container_columns()
+    for _i in range(EXTRA_COLS):
         add_child(Control.new())
     for field in _metadata.fields:
         var title = TITLE_CELL_SCENE.instantiate()
         add_child(title)
         title.cell_value = field.name
 
-func refresh_focus_neighbors() -> void:
-    # skip non-cell rows
-    for i in range(columns * EXTRA_ROWS, get_child_count()):
-        # skip non-cell columns
-        if 0 <= i % columns and i % columns < _extra_columns:
-            continue
-        var cell = get_child(i)
-        var is_left_edge = i % columns == _extra_columns
-        var is_right_edge = (i+1) % columns == 0
-        var is_top_edge = i - columns < EXTRA_ROWS * columns
-        var is_bottom_edge = i + columns >= get_child_count()
-
-        cell.set_cell_neighbor_left(cell.get_path() if is_left_edge else get_child(i-1).get_path())
-        cell.set_cell_neighbor_right(cell.get_path() if is_right_edge else get_child(i+1).get_path())
-        cell.set_cell_neighbor_top(cell.get_path() if is_top_edge else get_child(i-columns).get_path())
-        cell.set_cell_neighbor_bottom(cell.get_path() if is_bottom_edge else get_child(i+columns).get_path())
-
-        if is_right_edge and is_bottom_edge:
-            cell.set_cell_next(cell.get_path())
-        elif is_right_edge:
-            cell.set_cell_next(get_child(i + 1 + _extra_columns).get_path())
-        else:
-            cell.set_cell_next(get_child(i + 1).get_path())
-
-        if is_left_edge and is_top_edge:
-            cell.set_cell_previous(cell.get_path())
-        elif is_left_edge:
-            cell.set_cell_previous(get_child(i - _extra_columns - 1).get_path())
-        else:
-            cell.set_cell_previous(get_child(i - 1).get_path())
-
-func clear_grid(clear_title_row: bool = false) -> void:
-    for i in range(0 if clear_title_row else columns, get_child_count()):
-        var child := get_child(i)
+func clear_grid() -> void:
+    while get_child_count() > 0:
+        var child := get_child(0)
         remove_child(child)
         child.queue_free()
 
-func add_row(data: Array, row_idx: int = -1) -> void:
+func add_row(data: Array) -> void:
+    if not _metadata:
+        return
     for leading_cell in _get_leading_cells(get_spreadsheet_row_count() + 1):
         add_child(leading_cell)
-    for i in range(spreadsheet_columns):
+    for i in range(_metadata.fields.size()):
         var cell = _get_cell_scene(i)
         add_child(cell)
         if i < data.size():
             cell.cell_value = data[i]
 
-    if row_idx >= 0:
-        var insert_idx = (row_idx + EXTRA_ROWS) * columns
-        for i in range(columns):
-            move_child(get_child(get_child_count() - columns + i), insert_idx + i)
-
-    refresh_focus_neighbors()
-
 func get_spreadsheet_row_count() -> int:
-    return (get_child_count() / columns) - EXTRA_ROWS
+    return (get_child_count() / get_spreadsheet_width()) - EXTRA_ROWS
+
+func get_spreadsheet_width() -> int:
+    if not _metadata:
+        return EXTRA_COLS
+    return EXTRA_COLS + _metadata.fields.size()
 
 func get_spreadsheet_cell_count() -> int:
-    return get_spreadsheet_row_count() * spreadsheet_columns
+    if not _metadata:
+        return 0
+    return get_spreadsheet_row_count() * _metadata.fields.size()
 
 #region Hidden Columns
-# TODO GridContainer iterators broken. They can't account for hidden columns.
+# Hidden columns are solely to do with cell visibility. It has no effect on any programatic operations.
+
 func set_checkbox_visibility(visible: bool) -> void:
     _hide_row_checkboxes = not visible
-    for control in Util.ChildIterator.new(self, ROW_CHECKBOX_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+    for control in Util.ChildIterator.new(self, ROW_CHECKBOX_COL_IDX, self.get_child_count(), get_spreadsheet_width()):
         control.visible = visible
     _adjust_grid_container_columns()
 
 func set_row_num_visibility(visible: bool) -> void:
     _hide_row_nums = not visible
-    for control in Util.ChildIterator.new(self, ROW_NUM_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+    for control in Util.ChildIterator.new(self, ROW_NUM_COL_IDX, self.get_child_count(), get_spreadsheet_width()):
         control.visible = visible
     _adjust_grid_container_columns()
 
@@ -126,32 +92,41 @@ func set_field_visibility(field_idx: int, visible: bool) -> void:
         _hidden_field_idxs.erase(field_idx)
     else:
         _hidden_field_idxs[field_idx] = null
-    for control in Util.ChildIterator.new(self, EXTRA_COLS + field_idx, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()):
+    for control in Util.ChildIterator.new(self, EXTRA_COLS + field_idx, self.get_child_count(), get_spreadsheet_width()):
         control.visible = visible
     _adjust_grid_container_columns()
 
 func _adjust_grid_container_columns() -> void:
-    columns = _metadata.fields.size() - _hidden_field_idxs.size() + int(not _hide_row_checkboxes) + int(not _hide_row_nums)
+    columns = get_spreadsheet_width() - _hidden_field_idxs.size() - int(_hide_row_checkboxes) - int(_hide_row_nums)
 #endregion
 
 #region Iteration
-func iter_field(field_idx: int):
+## Iterates over every cell in a column of the grid, not including the title cell.
+## Iterates over the cell Controls.
+## Cell values can be accessed by calling `.cell_value` on each element of the iteration.
+func iter_field_cells(field_idx: int):
     if not _metadata:
         return []
-    return Util.MapIterator.new(
-        Util.ChildIterator.new(self, EXTRA_COLS + _metadata.fields.size() + EXTRA_COLS + field_idx, self.get_child_count(), EXTRA_COLS + _metadata.fields.size()),
-        func(cell): return cell.cell_value)
+    return Util.ChildIterator.new(
+        self,
+        get_spreadsheet_width() + EXTRA_COLS + field_idx,
+        self.get_child_count(),
+        get_spreadsheet_width())
 
+## Iterates over each row's CheckBox.
 func iter_checkboxes():
     if not _metadata:
         return []
-    return Util.ChildIterator.new(self, EXTRA_COLS + _metadata.fields.size() + ROW_CHECKBOX_COL_IDX, self.get_child_count(), EXTRA_COLS + _metadata.fields.size())
+    return Util.ChildIterator.new(self, get_spreadsheet_width() + ROW_CHECKBOX_COL_IDX, self.get_child_count(), get_spreadsheet_width())
 
+## Iterates over data entries in the grid.
+## Data entries are arrays of cell values, where each array is one row.
+## Data entries do not include the title row.
 func iter_entries():
     if not _metadata:
         return []
     return Util.MapIterator.new(
-        Util.ChildBatchIterator.new(self, EXTRA_COLS + _metadata.fields.size(), EXTRA_COLS + _metadata.fields.size()),
+        Util.ChildBatchIterator.new(self, get_spreadsheet_width(), get_spreadsheet_width()),
         func(cell_row): return cell_row.slice(EXTRA_COLS).map(func(cell): return cell.cell_value))
 #endregion
 
@@ -180,10 +155,13 @@ func _get_cell_scene(column_index: int) -> Control:
     return placeholder
 
 func _get_leading_cells(row_num: int) -> Array[Control]:
-    var result : Array[Control] = [CheckBox.new(), TITLE_CELL_SCENE.instantiate()]
-    result[1].cell_value = str(row_num)
-    result[0].toggled.connect(_on_row_checked)
-    return result
+    var checkbox := CheckBox.new()
+    checkbox.toggled.connect(_on_row_checked)
+    checkbox.visible = not _hide_row_checkboxes
+    var row_number := TITLE_CELL_SCENE.instantiate()
+    row_number.cell_value = str(row_num)
+    row_number.visible = not _hide_row_nums
+    return [checkbox, row_number]
 #endregion
 
 func get_checked_rows_count() -> int:
@@ -200,42 +178,42 @@ func get_checked_rows() -> Array[int]:
             checked_rows.push_back(tup[0])
     return checked_rows
 
-func _shortcut_input(event: InputEvent) -> void:
-    if not is_visible_in_tree(): return
-    if not event.is_pressed(): return
-    if event.is_echo(): return
-    var focused_cell = _get_focused_cell_root_or_null()
-    if not focused_cell:
-        return
-    var handled := false
-    if Shortcuts.nav_left_edge.matches_event(event):
-        var row_index = focused_cell.get_index() / columns
-        get_child(row_index * columns).grab_focus()
-        handled = true
-    elif Shortcuts.nav_right_edge.matches_event(event):
-        var row_index = focused_cell.get_index() / columns
-        get_child(row_index * columns + columns - 1).grab_focus()
-        handled = true
-    elif Shortcuts.nav_top_edge.matches_event(event):
-        var col_index = focused_cell.get_index() % columns
-        get_child(col_index).grab_focus()
-        handled = true
-    elif Shortcuts.nav_bottom_edge.matches_event(event):
-        var col_index = focused_cell.get_index() % columns
-        get_child(columns * (get_spreadsheet_row_count() - 1) + col_index).grab_focus()
-        handled = true
-    elif Shortcuts.nav_sheet_start.matches_event(event):
-        get_child(0).grab_focus()
-        handled = true
-    elif Shortcuts.nav_sheet_end.matches_event(event):
-        get_child(get_child_count() - 1).grab_focus()
-        handled = true
-    elif Shortcuts.exit_sheet.matches_event(event):
-        message_bus().sheets_tab_bar_grab_focus.emit()
-        handled = true
+# func _shortcut_input(event: InputEvent) -> void:
+#     if not is_visible_in_tree(): return
+#     if not event.is_pressed(): return
+#     if event.is_echo(): return
+#     var focused_cell = _get_focused_cell_root_or_null()
+#     if not focused_cell:
+#         return
+#     var handled := false
+#     if Shortcuts.nav_left_edge.matches_event(event):
+#         var row_index = focused_cell.get_index() / columns
+#         get_child(row_index * columns).grab_focus()
+#         handled = true
+#     elif Shortcuts.nav_right_edge.matches_event(event):
+#         var row_index = focused_cell.get_index() / columns
+#         get_child(row_index * columns + columns - 1).grab_focus()
+#         handled = true
+#     elif Shortcuts.nav_top_edge.matches_event(event):
+#         var col_index = focused_cell.get_index() % columns
+#         get_child(col_index).grab_focus()
+#         handled = true
+#     elif Shortcuts.nav_bottom_edge.matches_event(event):
+#         var col_index = focused_cell.get_index() % columns
+#         get_child(columns * (get_spreadsheet_row_count() - 1) + col_index).grab_focus()
+#         handled = true
+#     elif Shortcuts.nav_sheet_start.matches_event(event):
+#         get_child(0).grab_focus()
+#         handled = true
+#     elif Shortcuts.nav_sheet_end.matches_event(event):
+#         get_child(get_child_count() - 1).grab_focus()
+#         handled = true
+#     elif Shortcuts.exit_sheet.matches_event(event):
+#         message_bus().sheets_tab_bar_grab_focus.emit()
+#         handled = true
 
-    if handled:
-        get_viewport().set_input_as_handled()
+#     if handled:
+#         get_viewport().set_input_as_handled()
 
 func _get_focused_cell_root_or_null() -> Control:
     var current_focused_control := get_viewport().gui_get_focus_owner()
@@ -249,56 +227,60 @@ func _get_focused_cell_root_or_null() -> Control:
 func _on_field_updated(table_id: StringName, field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(columns + _extra_columns + field_idx, get_child_count(), columns):
-        var old_cell = get_child(i)
+    for old_cell in iter_field_cells(field_idx):
+        var old_cell_idx = old_cell.get_index()
         var cell_value = old_cell.cell_value
-        var new_cell = _get_cell_scene(field_idx)
         remove_child(old_cell)
         old_cell.queue_free()
+        var new_cell = _get_cell_scene(field_idx)
         add_child(new_cell)
-        move_child(new_cell, i)
+        move_child(new_cell, old_cell_idx)
         new_cell.cell_value = cell_value
+        if _hidden_field_idxs.has(field_idx):
+            new_cell.visible = false
 
-func _on_field_added(table_id: StringName, field_idx: int) -> void:
+func _on_field_added(table_id: StringName) -> void:
     if not _metadata or table_id != _metadata.id:
         return
+    _adjust_grid_container_columns()
+    var field_idx = _metadata.fields.size() - 1
     var total_rows = get_spreadsheet_row_count()
-    columns += 1
     var title = TITLE_CELL_SCENE.instantiate()
     add_child(title)
-    move_child(title, field_idx + _extra_columns)
+    move_child(title, EXTRA_COLS + field_idx)
     title.cell_value = _metadata.fields[field_idx].name
     for i in range(total_rows):
         var cell = _get_cell_scene(field_idx)
         add_child(cell)
-        move_child(cell, ((i + EXTRA_ROWS) * columns) + field_idx + _extra_columns)
+        move_child(cell, (i + EXTRA_ROWS) * get_spreadsheet_width() + EXTRA_ROWS + field_idx)
 
 func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
+    _hidden_field_idxs.erase(field_idx)
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(get_child_count() - spreadsheet_columns + field_idx, -1, -columns):
+    for i in range(get_child_count() - _metadata.fields.size() + field_idx, -1, get_spreadsheet_width()):
         var child = get_child(i)
         remove_child(child)
         child.queue_free()
-    columns -= 1
+    _adjust_grid_container_columns()
 
 func _on_field_moved(table_id: StringName, previous_field_idx: int, new_field_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(_extra_columns, get_child_count(), columns):
+    for i in range(EXTRA_COLS, get_child_count(), get_spreadsheet_width()):
         var child = get_child(i + previous_field_idx)
         move_child(child, i + new_field_idx)
 
-func _on_row_added(table_id: StringName, row_idx: int) -> void:
+func _on_row_added(table_id: StringName) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    add_row([], row_idx)
+    add_row([])
 
 func _on_row_deleted(table_id: StringName, row_idx: int) -> void:
     if not _metadata or table_id != _metadata.id:
         return
-    var cell_idx := (EXTRA_ROWS + row_idx) * columns
-    for _i in range(columns):
+    var cell_idx := (EXTRA_ROWS + row_idx) * get_spreadsheet_width()
+    for _i in range(get_spreadsheet_width()):
         var child = get_child(cell_idx)
         remove_child(child)
         child.queue_free()

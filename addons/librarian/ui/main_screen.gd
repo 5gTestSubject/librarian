@@ -114,7 +114,7 @@ func _on_new_row_button_pressed() -> void:
     var table_metadata = _get_active_spreadsheet_metadata()
     if not table_metadata:
         return
-    message_bus().row_added.emit(table_metadata.id, -1)
+    message_bus().row_added.emit(table_metadata.id)
 
 func _on_delete_selected_rows_button_pressed() -> void:
     _evaluate_active_controls()

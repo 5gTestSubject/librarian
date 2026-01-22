@@ -35,4 +35,4 @@ func _on_new_field_submitted(name: String, description: String, type: StringName
     field.type = type
     field.id = UUID.v4()
     metadata.fields.append(field)
-    message_bus().field_added.emit(metadata.id, metadata.fields.size() - 1)
+    message_bus().field_added.emit(metadata.id)
