@@ -5,6 +5,7 @@ const AUTOLOAD_NAME := "LibrarianMessageBus"
 const AUTOLOAD_NODE_PATH := ^"/root/LibrarianMessageBus"
 
 signal open_table(table_path: String)
+signal open_settings
 
 signal main_screen_table_changed(table_metadata: LibraryTableInfo)
 
