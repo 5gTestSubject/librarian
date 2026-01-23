@@ -1,7 +1,7 @@
 @tool
 extends PanelContainer
 
-var current_spreadsheet_focus: int:
+var current_tab_focus: int:
     get:
         var result := -1
         for i in range(get_child_count()):
@@ -15,21 +15,21 @@ var current_spreadsheet_focus: int:
         if index < 0:
             _invisible_all()
             return
-        var target := get_spreadsheet(index)
+        var target := get_tab(index)
         if not target:
-            push_error("Attempted to focus nonexistent spreadsheet %s. Total spreadsheets: %s." % [index, get_spreadsheet_count()])
+            push_error("Attempted to focus nonexistent tab %s. Total tabs: %s." % [index, count()])
             return
         _invisible_all()
         target.visible = true
 
-func get_spreadsheet_count() -> int:
+func count() -> int:
     var count := 0
     for i in range(get_child_count()):
         if get_child(i) is Control:
             count += 1
     return count
 
-func get_spreadsheet(index: int) -> Control:
+func get_tab(index: int) -> Control:
     if index < 0 or index >= get_child_count():
         return null
     var control_idx := -1
@@ -41,7 +41,7 @@ func get_spreadsheet(index: int) -> Control:
                 return control
     return null
 
-func remove_spreadsheet(index: int) -> bool:
+func remove_tab(index: int) -> bool:
     if index < 0 or index >= get_child_count():
         return false
     var control_idx := -1
@@ -55,13 +55,13 @@ func remove_spreadsheet(index: int) -> bool:
                 return true
     return false
 
-func sort_spreadsheets(table_id_order: Array[StringName]) -> void:
-    for i in range(table_id_order.size()):
+func sort_tabs(tab_id_order: Array[StringName]) -> void:
+    for i in range(tab_id_order.size()):
         for j in range(i, get_child_count()):
             var control = get_child(j) as Control
             if not control:
                 continue
-            if control.metadata.id == table_id_order[i]:
+            if control.metadata.id == tab_id_order[i]:
                 move_child(control, i)
                 break
 

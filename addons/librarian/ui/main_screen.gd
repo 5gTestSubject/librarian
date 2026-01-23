@@ -65,7 +65,7 @@ func _is_spreadsheet_active() -> bool:
     return true
 
 func _get_active_spreadsheet():
-    return %TabsContainer.get_spreadsheet(%TabsContainer.current_spreadsheet_focus)
+    return %TabsContainer.get_tab(%TabsContainer.current_tab_focus)
 
 func _evaluate_active_controls():
     var table = _get_active_spreadsheet()
@@ -94,12 +94,12 @@ func _on_spreadsheets_tab_bar_tab_changed(tab:int) -> void:
     ## edge case on creation of first tab
     if not metadata:
         return
-    %TabsContainer.current_spreadsheet_focus = tab
+    %TabsContainer.current_tab_focus = tab
     message_bus().main_screen_table_changed.emit(metadata["table_metadata"])
     _evaluate_active_controls()
 
 func _on_spreadsheets_tab_bar_button_pressed(tab: int) -> void:
-    %TabsContainer.remove_spreadsheet(tab)
+    %TabsContainer.remove_tab(tab)
     %TabsBar.remove_tab(tab)
 
 func _on_spreadsheets_tab_bar_active_tab_rearranged(_idx_to:int) -> void:
@@ -107,7 +107,7 @@ func _on_spreadsheets_tab_bar_active_tab_rearranged(_idx_to:int) -> void:
     ids.resize(%TabsBar.tab_count)
     for i in range(%TabsBar.tab_count):
         ids[i] = %TabsBar.get_tab_metadata(i)["table_metadata"].id
-    %TabsContainer.sort_spreadsheets(ids)
+    %TabsContainer.sort_tabs(ids)
     pass # _on_spreadsheets_tab_bar_tab_changed(%TabsBar.current_tab)
 
 func _on_new_row_button_pressed() -> void:
@@ -136,13 +136,13 @@ func _shortcut_input(event: InputEvent) -> void:
     if event.is_echo(): return
     var handled := false
     if Shortcuts.save_sheet.matches_event(event) or Shortcuts.save_sheet_alt.matches_event(event):
-        var sheet = %TabsContainer.get_spreadsheet(%TabsContainer.current_spreadsheet_focus)
+        var sheet = %TabsContainer.get_tab(%TabsContainer.current_tab_focus)
         if sheet:
             sheet.save_table()
             handled = true
     elif Shortcuts.save_all_sheets.matches_event(event):
-        for i in range(%TabsContainer.get_spreadsheet_count()):
-            var sheet = %TabsContainer.get_spreadsheet(i)
+        for i in range(%TabsContainer.count()):
+            var sheet = %TabsContainer.get_tab(i)
             if sheet:
                 sheet.save_table()
                 handled = true
