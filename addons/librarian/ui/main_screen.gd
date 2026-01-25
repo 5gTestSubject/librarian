@@ -25,18 +25,18 @@ func _open_table(table_path: String) -> void:
     if tab_idx >= 0:
         %EditorTabs.current_tab = tab_idx
         return
-    var table_reader = TableAccess.get_table_reader(table_path)
-    table_reader.open()
-    var metadata = table_reader.metadata
-    table_reader.close()
 
     var sheet = preload(
         "res://addons/librarian/ui/spreadsheet/spreadsheet_editor_tab.tscn"
     ).instantiate()
-    sheet.name = metadata.name
+
+    var table_reader = TableAccess.get_table_reader(table_path)
+    table_reader.open()
+    sheet.name = table_reader.metadata.name
+    table_reader.close()
+
     _new_editor_tab(sheet,{
         "id": table_path,
-        "table_metadata": metadata
     })
 
 func _open_settings() -> void:
@@ -57,7 +57,6 @@ func _new_editor_tab(tab: Control, tab_metadata: Dictionary, focus_new: bool = t
     %EditorTabs.set_tab_metadata(new_tab_idx, tab_metadata)
     if focus_new:
         %EditorTabs.current_tab = new_tab_idx
-    message_bus().main_screen_table_changed.emit(tab_metadata.get("table_metadata"))
     tab.load_content(tab_metadata.get("id"))
 
 ## Searches existing open sheets for one that has opened the given path.
@@ -68,17 +67,6 @@ func _find_editor_tab(id: String) -> int:
         if metadata and metadata["id"] == id:
             return i
     return -1
-
-func _get_active_spreadsheet():
-    return %EditorTabs.get_current_tab_control()
-
-func _get_active_spreadsheet_metadata() -> LibraryTableInfo:
-    if %EditorTabs.get_tab_count() < 1:
-        return null
-    var tab_metadata := %EditorTabs.get_tab_metadata(%EditorTabs.current_tab) as Dictionary
-    if not tab_metadata:
-        return null
-    return tab_metadata.get("table_metadata")
 
 func _on_editor_tab_bar_button_pressed(tab: int) -> void:
     %EditorTabs.remove_tab(tab)
