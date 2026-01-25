@@ -21,3 +21,4 @@ tabs_position = 1
 drag_to_rearrange_enabled = true
 
 [connection signal="tab_button_pressed" from="EditorTabs" to="." method="_on_editor_tab_bar_button_pressed"]
+[connection signal="tab_changed" from="EditorTabs" to="." method="_on_editor_tab_changed"]

@@ -71,6 +71,11 @@ func _find_editor_tab(id: String) -> int:
 func _on_editor_tab_bar_button_pressed(tab: int) -> void:
     %EditorTabs.remove_tab(tab)
 
+func _on_editor_tab_changed(tab: int) -> void:
+    var control = %EditorTabs.get_tab_control(tab)
+    if control and control.has_method(&"on_editor_tab_selected"):
+        control.on_editor_tab_selected()
+
 func _shortcut_input(event: InputEvent) -> void:
     if not is_visible_in_tree(): return
     if not event.is_pressed(): return
@@ -83,8 +88,8 @@ func _shortcut_input(event: InputEvent) -> void:
             tab.save_content()
             handled = true
     elif %EditorTabs.get_tab_count() > 0 and Shortcuts.save_all_sheets.matches_event(event):
-        for i in range(%TabsContainer.count()):
-            var tab = %TabsContainer.get_tab(i)
+        for i in range(%EditorTabs.get_tab_count()):
+            var tab = %EditorTabs.get_tab_control(i)
             if tab and tab.has_method(&"save_content"):
                 tab.save_content()
                 handled = true
