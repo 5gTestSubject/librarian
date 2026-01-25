@@ -70,7 +70,7 @@ func _find_editor_tab(id: String) -> int:
     return -1
 
 func _get_active_spreadsheet():
-    return %EditorTabs.get_tab(%EditorTabs.current_tab)
+    return %EditorTabs.get_current_tab_control()
 
 func _evaluate_active_controls():
     var table = _get_active_spreadsheet()
@@ -98,16 +98,17 @@ func _shortcut_input(event: InputEvent) -> void:
     if not event.is_pressed(): return
     if event.is_echo(): return
     var handled := false
-    if Shortcuts.save_sheet.matches_event(event) or Shortcuts.save_sheet_alt.matches_event(event):
-        var sheet = %TabsContainer.get_tab(%TabsContainer.current_tab_focus)
-        if sheet:
-            sheet.save_content()
+    var tab_open: bool = %EditorTabs.current_tab >= 0
+    if tab_open and (Shortcuts.save_sheet.matches_event(event) or Shortcuts.save_sheet_alt.matches_event(event)):
+        var tab: Control = %EditorTabs.get_current_tab_control()
+        if tab and tab.has_method(&"save_content"):
+            tab.save_content()
             handled = true
-    elif Shortcuts.save_all_sheets.matches_event(event):
+    elif %EditorTabs.get_tab_count() > 0 and Shortcuts.save_all_sheets.matches_event(event):
         for i in range(%TabsContainer.count()):
-            var sheet = %TabsContainer.get_tab(i)
-            if sheet:
-                sheet.save_content()
+            var tab = %TabsContainer.get_tab(i)
+            if tab and tab.has_method(&"save_content"):
+                tab.save_content()
                 handled = true
     if handled:
         get_viewport().set_input_as_handled()
