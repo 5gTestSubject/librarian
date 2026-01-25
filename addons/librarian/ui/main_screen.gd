@@ -72,16 +72,6 @@ func _find_editor_tab(id: String) -> int:
 func _get_active_spreadsheet():
     return %EditorTabs.get_current_tab_control()
 
-func _evaluate_active_controls():
-    var table = _get_active_spreadsheet()
-    for node in get_tree().get_nodes_in_group("table_operator"):
-        if node is BaseButton:
-            node.disabled = not table
-    var row_operators_enabled = false if not table else table.get_checked_rows_count()
-    for node in get_tree().get_nodes_in_group("table_rows_operator"):
-        if node is BaseButton:
-            node.disabled = not row_operators_enabled
-
 func _get_active_spreadsheet_metadata() -> LibraryTableInfo:
     if %EditorTabs.get_tab_count() < 1:
         return null

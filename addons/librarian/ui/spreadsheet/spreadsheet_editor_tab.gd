@@ -34,10 +34,8 @@ func add_row() -> void:
     %Spreadsheet.add_row([])
 
 func delete_selected() -> void:
-    pass
-
-func get_checked_rows_count() -> int:
-    return %Spreadsheet.get_checked_rows_count()
-
-func get_checked_rows() -> Array[int]:
-    return %Spreadsheet.get_checked_rows()
+    var checked_rows = %Spreadsheet.get_checked_rows()
+    checked_rows.sort()
+    checked_rows.reverse()
+    for i in checked_rows:
+        message_bus().row_deleted.emit(%Spreadsheet.get_metadata().id, i)

@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://b6wdmigpepypt"]
+[gd_scene load_steps=22 format=3 uid="uid://b6wdmigpepypt"]
 
 [ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="1_3iwbi"]
 [ext_resource type="Script" uid="uid://dn7e23wrh0x42" path="res://addons/librarian/ui/library_settings/tag_management.gd" id="1_a3cxd"]
 [ext_resource type="PackedScene" uid="uid://c26oix342rfcb" path="res://addons/librarian/ui/spreadsheet/spreadsheet_grid.tscn" id="2_wfr7g"]
 [ext_resource type="Script" uid="uid://dyc6disjps6e7" path="res://addons/librarian/scripts/library_table_field_info.gd" id="3_a3cxd"]
+[ext_resource type="Texture2D" uid="uid://dvf28js7cqcm3" path="res://addons/librarian/res/icons/godot/Remove.svg" id="3_qy5kh"]
 [ext_resource type="Script" uid="uid://dftecskc8dfy6" path="res://addons/librarian/scripts/library_table_number_field_info.gd" id="4_8kglx"]
 [ext_resource type="Script" uid="uid://i68t57nw4njh" path="res://addons/librarian/scripts/library_table_text_field_info.gd" id="5_p7ak1"]
 [ext_resource type="Script" uid="uid://bjg2nexvkhxdm" path="res://addons/librarian/scripts/library_table_info.gd" id="6_d5klo"]
@@ -90,7 +91,7 @@ metadata/_custom_type_script = "uid://dyc6disjps6e7"
 
 [sub_resource type="Resource" id="Resource_jdqtj"]
 script = ExtResource("6_d5klo")
-id = &"00000000-0000-0000-0000-000000000000"
+id = &"9db061a4-8663-41c7-964d-37d4c94baab8"
 name = "Tags"
 description = ""
 fields = Array[ExtResource("3_a3cxd")]([SubResource("Resource_p7ak1"), SubResource("Resource_ivmpo"), SubResource("Resource_q88ee"), SubResource("Resource_ck18x")])
@@ -103,7 +104,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_a3cxd")
-tag_table_metadata = SubResource("Resource_jdqtj")
 
 [node name="HFlowContainer" type="HFlowContainer" parent="."]
 layout_mode = 2
@@ -112,6 +112,11 @@ layout_mode = 2
 layout_mode = 2
 text = "New Tag"
 icon = ExtResource("1_3iwbi")
+
+[node name="DeleteTagButton" type="Button" parent="HFlowContainer"]
+layout_mode = 2
+text = "Delete Tag"
+icon = ExtResource("3_qy5kh")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
@@ -124,3 +129,4 @@ columns = 5
 _metadata = SubResource("Resource_jdqtj")
 
 [connection signal="pressed" from="HFlowContainer/NewTagButton" to="." method="_on_new_tag_button_pressed"]
+[connection signal="pressed" from="HFlowContainer/DeleteTagButton" to="." method="delete_selected"]

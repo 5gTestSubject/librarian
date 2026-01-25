@@ -29,6 +29,9 @@ func _ready() -> void:
     message_bus().row_deleted.connect(_on_row_deleted)
     message_bus().row_moved.connect(_on_row_moved)
 
+func get_metadata() -> LibraryTableInfo:
+    return _metadata
+
 func reset_table(metadata: LibraryTableInfo) -> void:
     clear_grid()
     _metadata = metadata
