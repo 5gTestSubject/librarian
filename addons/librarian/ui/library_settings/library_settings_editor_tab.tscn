@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://b6wdmigpepypt" path="res://addons/librarian/ui/library_settings/tag_management.tscn" id="1_3vs27"]
 [ext_resource type="Script" uid="uid://cp7ha06rypfnv" path="res://addons/librarian/ui/library_settings/library_settings_editor_tab.gd" id="1_e1m53"]
 
-[node name="LibrarySettingsManagement" type="VBoxContainer"]
+[node name="LibrarySettingsEditorTab" type="VBoxContainer"]
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_horizontal = 3

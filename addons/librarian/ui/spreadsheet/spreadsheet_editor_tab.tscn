@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="2_woetf"]
 [ext_resource type="Texture2D" uid="uid://dvf28js7cqcm3" path="res://addons/librarian/res/icons/godot/Remove.svg" id="3_mt6sx"]
 
-[node name="SpreadsheetContainer" type="VBoxContainer"]
+[node name="SpreadsheetEditorTab" type="VBoxContainer"]
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_horizontal = 3
