@@ -9,19 +9,20 @@ var loaded_path := ""
 var metadata: LibraryTableInfo
 
 ## Load the given table path into this spreadsheet using the given metadata.
-func load_table(table_path) -> void:
+func load_content(table_path: String) -> void:
     loaded_path = table_path
     var reader = TableAccess.get_table_reader(table_path)
     reader.open()
     metadata = reader.metadata
     name = metadata.name
     %Spreadsheet.reset_table(metadata)
+    message_bus().main_screen_table_changed.emit(metadata)
     var data_row: Array = reader.read()
     while not data_row.is_empty() and not (data_row.size() == 1 and data_row[0] == null):
         %Spreadsheet.add_row(data_row)
         data_row = reader.read()
 
-func save_table(flush_every: int = -1) -> void:
+func save_content(flush_every: int = -1) -> void:
     var writer = TableAccess.get_table_writer(loaded_path) #, metadata, %Spreadsheet.iter_entries())
     writer.open(metadata)
     for tup in Util.EnumerateIterator.new(%Spreadsheet.iter_entries()):
@@ -33,8 +34,12 @@ func save_table(flush_every: int = -1) -> void:
 func add_row() -> void:
     %Spreadsheet.add_row([])
 
-func get_checked_rows_count() -> int:
-    return %Spreadsheet.get_checked_rows_count()
+func delete_selected() -> void:
+    var checked_rows = %Spreadsheet.get_checked_rows()
+    checked_rows.sort()
+    checked_rows.reverse()
+    for i in checked_rows:
+        message_bus().row_deleted.emit(%Spreadsheet.get_metadata().id, i)
 
-func get_checked_rows() -> Array[int]:
-    return %Spreadsheet.get_checked_rows()
+func on_editor_tab_selected() -> void:
+    message_bus().main_screen_table_changed.emit(metadata)

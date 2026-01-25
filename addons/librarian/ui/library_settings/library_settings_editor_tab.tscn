@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://cibh0ipuc2bfs"]
+
+[ext_resource type="PackedScene" uid="uid://b6wdmigpepypt" path="res://addons/librarian/ui/library_settings/tag_management.tscn" id="1_3vs27"]
+[ext_resource type="Script" uid="uid://cp7ha06rypfnv" path="res://addons/librarian/ui/library_settings/library_settings_editor_tab.gd" id="1_e1m53"]
+
+[node name="LibrarySettingsEditorTab" type="VBoxContainer"]
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_e1m53")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Tags"
+
+[node name="TagManagement" parent="." instance=ExtResource("1_3vs27")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3

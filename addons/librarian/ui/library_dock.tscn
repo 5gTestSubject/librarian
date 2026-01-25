@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://ofyq237y1tq4"]
+[gd_scene load_steps=8 format=3 uid="uid://ofyq237y1tq4"]
 
 [ext_resource type="Script" uid="uid://d4htprkqbne5n" path="res://addons/librarian/ui/library_dock.gd" id="1_5uv33"]
 [ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="2_bhsn3"]
 [ext_resource type="Script" uid="uid://c4el1hf3jjwvd" path="res://addons/librarian/ui/tables_tree.gd" id="2_om6fh"]
+[ext_resource type="Texture2D" uid="uid://dp4yd2y5erre5" path="res://addons/librarian/res/icons/godot/Gear.svg" id="3_2vb1b"]
 [ext_resource type="Texture2D" uid="uid://c5svq0m5raph1" path="res://addons/librarian/res/icons/godot/Grid.svg" id="3_5uv33"]
 [ext_resource type="Texture2D" uid="uid://bdiei3xy4c4do" path="res://addons/librarian/res/icons/godot/Load.svg" id="6_2vb1b"]
 [ext_resource type="Texture2D" uid="uid://dvf28js7cqcm3" path="res://addons/librarian/res/icons/godot/Remove.svg" id="7_3fa1d"]
@@ -26,6 +27,10 @@ layout_mode = 2
 layout_mode = 2
 tooltip_text = "Create new table"
 icon = ExtResource("2_bhsn3")
+
+[node name="SettingsButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+icon = ExtResource("3_2vb1b")
 
 [node name="TablesTree" type="Tree" parent="VBoxContainer"]
 layout_mode = 2
@@ -87,6 +92,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/NewTableButton" to="." method="_on_new_table_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="item_activated" from="VBoxContainer/TablesTree" to="VBoxContainer/TablesTree" method="_on_item_activated"]
 [connection signal="item_mouse_selected" from="VBoxContainer/TablesTree" to="VBoxContainer/TablesTree" method="_on_item_mouse_selected"]
 [connection signal="id_pressed" from="VBoxContainer/TablesTree/ContextMenu" to="VBoxContainer/TablesTree" method="_on_context_menu_id_pressed"]

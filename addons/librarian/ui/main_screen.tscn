@@ -1,10 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://b01akgbfoh4rp"]
+[gd_scene load_steps=3 format=3 uid="uid://b01akgbfoh4rp"]
 
 [ext_resource type="Script" uid="uid://p1gpahxkjju0" path="res://addons/librarian/ui/main_screen.gd" id="1_gs68p"]
-[ext_resource type="Script" uid="uid://bonj8k8h12d5a" path="res://addons/librarian/ui/main_screen_spreadsheets_container.gd" id="1_sl43r"]
 [ext_resource type="Texture2D" uid="uid://cbx145cvfpxhx" path="res://addons/librarian/res/icons/godot/Close.svg" id="2_bn1aj"]
-[ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="3_xdghn"]
-[ext_resource type="Texture2D" uid="uid://dvf28js7cqcm3" path="res://addons/librarian/res/icons/godot/Remove.svg" id="4_yt00l"]
 
 [node name="MainScreen" type="VBoxContainer"]
 anchors_preset = 15
@@ -16,35 +13,12 @@ size_flags_vertical = 3
 script = ExtResource("1_gs68p")
 close_sheet_icon = ExtResource("2_bn1aj")
 
-[node name="HFlowContainer" type="HFlowContainer" parent="."]
-layout_mode = 2
-
-[node name="NewRowButton" type="Button" parent="HFlowContainer" groups=["table_operator"]]
-layout_mode = 2
-text = "New Row"
-icon = ExtResource("3_xdghn")
-
-[node name="DeleteSelectedRowsButton" type="Button" parent="HFlowContainer" groups=["table_operator", "table_rows_operator"]]
-layout_mode = 2
-disabled = true
-text = "Delete Selected"
-icon = ExtResource("4_yt00l")
-
-[node name="SpreadsheetsContainer" type="PanelContainer" parent="."]
+[node name="EditorTabs" type="TabContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-script = ExtResource("1_sl43r")
-
-[node name="SpreadsheetsTabBar" type="TabBar" parent="."]
-unique_name_in_owner = true
-layout_mode = 2
+tabs_position = 1
 drag_to_rearrange_enabled = true
 
-[connection signal="pressed" from="HFlowContainer/NewRowButton" to="." method="_on_new_row_button_pressed"]
-[connection signal="pressed" from="HFlowContainer/DeleteSelectedRowsButton" to="." method="_on_delete_selected_rows_button_pressed"]
-[connection signal="child_entered_tree" from="SpreadsheetsContainer" to="SpreadsheetsContainer" method="_on_child_entered_tree"]
-[connection signal="child_exiting_tree" from="SpreadsheetsContainer" to="SpreadsheetsContainer" method="_on_child_exiting_tree"]
-[connection signal="active_tab_rearranged" from="SpreadsheetsTabBar" to="." method="_on_spreadsheets_tab_bar_active_tab_rearranged"]
-[connection signal="tab_button_pressed" from="SpreadsheetsTabBar" to="." method="_on_spreadsheets_tab_bar_button_pressed"]
-[connection signal="tab_changed" from="SpreadsheetsTabBar" to="." method="_on_spreadsheets_tab_bar_tab_changed"]
+[connection signal="tab_button_pressed" from="EditorTabs" to="." method="_on_editor_tab_bar_button_pressed"]
+[connection signal="tab_changed" from="EditorTabs" to="." method="_on_editor_tab_changed"]

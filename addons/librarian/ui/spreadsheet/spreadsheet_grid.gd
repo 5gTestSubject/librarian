@@ -29,6 +29,9 @@ func _ready() -> void:
     message_bus().row_deleted.connect(_on_row_deleted)
     message_bus().row_moved.connect(_on_row_moved)
 
+func get_metadata() -> LibraryTableInfo:
+    return _metadata
+
 func reset_table(metadata: LibraryTableInfo) -> void:
     clear_grid()
     _metadata = metadata
@@ -62,12 +65,20 @@ func add_row(data: Array) -> void:
             cell.visible = false
 
 func get_spreadsheet_row_count() -> int:
-    return (get_child_count() / get_spreadsheet_width()) - EXTRA_ROWS
+    if not _metadata:
+        return EXTRA_COLS
+    return _calculate_spreadsheet_rows(get_child_count(), _metadata.fields.size())
 
 func get_spreadsheet_width() -> int:
     if not _metadata:
         return EXTRA_COLS
-    return EXTRA_COLS + _metadata.fields.size()
+    return _calculate_spreadsheet_width(_metadata.fields.size())
+
+static func _calculate_spreadsheet_rows(child_count: int, field_count: int) -> int:
+    return (child_count / (EXTRA_COLS + field_count)) - EXTRA_ROWS
+
+static func _calculate_spreadsheet_width(field_count: int) -> int:
+    return EXTRA_COLS + field_count
 
 func get_spreadsheet_cell_count() -> int:
     if not _metadata:
@@ -246,7 +257,7 @@ func _on_field_added(table_id: StringName) -> void:
         return
     _adjust_grid_container_columns()
     var field_idx = _metadata.fields.size() - 1
-    var total_rows = get_spreadsheet_row_count()
+    var total_rows = _calculate_spreadsheet_rows(get_child_count(), _metadata.fields.size() - 1)
     var title = TITLE_CELL_SCENE.instantiate()
     add_child(title)
     move_child(title, EXTRA_COLS + field_idx)
@@ -254,7 +265,7 @@ func _on_field_added(table_id: StringName) -> void:
     for i in range(total_rows):
         var cell = _get_cell_scene(field_idx)
         add_child(cell)
-        move_child(cell, (i + EXTRA_ROWS) * get_spreadsheet_width() + EXTRA_ROWS + field_idx)
+        move_child(cell, (i + EXTRA_ROWS) * get_spreadsheet_width() + EXTRA_COLS + field_idx)
 
 func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
     _hidden_field_idxs.erase(field_idx)
