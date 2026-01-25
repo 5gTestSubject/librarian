@@ -9,7 +9,7 @@ var loaded_path := ""
 var metadata: LibraryTableInfo
 
 ## Load the given table path into this spreadsheet using the given metadata.
-func load_table(table_path) -> void:
+func load_content(table_path: String) -> void:
     loaded_path = table_path
     var reader = TableAccess.get_table_reader(table_path)
     reader.open()
@@ -21,7 +21,7 @@ func load_table(table_path) -> void:
         %Spreadsheet.add_row(data_row)
         data_row = reader.read()
 
-func save_table(flush_every: int = -1) -> void:
+func save_content(flush_every: int = -1) -> void:
     var writer = TableAccess.get_table_writer(loaded_path) #, metadata, %Spreadsheet.iter_entries())
     writer.open(metadata)
     for tup in Util.EnumerateIterator.new(%Spreadsheet.iter_entries()):
@@ -32,6 +32,9 @@ func save_table(flush_every: int = -1) -> void:
 
 func add_row() -> void:
     %Spreadsheet.add_row([])
+
+func delete_selected() -> void:
+    pass
 
 func get_checked_rows_count() -> int:
     return %Spreadsheet.get_checked_rows_count()

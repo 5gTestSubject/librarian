@@ -10,6 +10,7 @@ const VERSION_1_0 := "1.0"
 static func get_location() -> String:
     return Util.path_combine(Properties.get_library_location(), TAGS_LOCATION)
 
+## Returns tag ID to tag.
 static func load_tags() -> Dictionary[StringName, LibraryTag]:
     var result: Dictionary[StringName, LibraryTag] = {}
     var file := FileAccess.open(get_location(), FileAccess.READ)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=21 format=3 uid="uid://b6wdmigpepypt"]
 
 [ext_resource type="Texture2D" uid="uid://ixdn5g8uf3w1" path="res://addons/librarian/res/icons/godot/Add.svg" id="1_3iwbi"]
-[ext_resource type="Script" uid="uid://dn7e23wrh0x42" path="res://addons/librarian/ui/tags/tag_management.gd" id="1_a3cxd"]
+[ext_resource type="Script" uid="uid://dn7e23wrh0x42" path="res://addons/librarian/ui/library_settings/tag_management.gd" id="1_a3cxd"]
 [ext_resource type="PackedScene" uid="uid://c26oix342rfcb" path="res://addons/librarian/ui/spreadsheet/spreadsheet_grid.tscn" id="2_wfr7g"]
 [ext_resource type="Script" uid="uid://dyc6disjps6e7" path="res://addons/librarian/scripts/library_table_field_info.gd" id="3_a3cxd"]
 [ext_resource type="Script" uid="uid://dftecskc8dfy6" path="res://addons/librarian/scripts/library_table_number_field_info.gd" id="4_8kglx"]

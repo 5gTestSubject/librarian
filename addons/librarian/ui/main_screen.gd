@@ -2,70 +2,75 @@
 extends Container
 
 func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
-const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Properties = preload("res://addons/librarian/properties.gd")
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
+const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Util = preload("res://addons/librarian/utils.gd")
+
+const SETTINGS_ID := ".settings"
 
 @export var close_sheet_icon: Texture2D
 
 func _ready() -> void:
-    message_bus().sheets_tab_bar_grab_focus.connect(func(): %TabsBar.grab_focus())
+    message_bus().sheets_tab_bar_grab_focus.connect(func(): %EditorTabs.get_tab_bar().grab_focus())
     message_bus().open_table.connect(_open_table)
+    message_bus().open_settings.connect(_open_settings)
     message_bus().main_screen_table_changed.connect(
         func(_table_metadata):
             if Engine.is_editor_hint():
                 EditorInterface.set_main_screen_editor(Util.MAIN_SCREEN_NAME))
-    message_bus().row_select_updated.connect(_on_row_select_updated)
 
-func _open_table(path: String) -> void:
-    var sheet_idx = _find_sheet(path)
-    if sheet_idx >= 0:
-        %TabsBar.current_tab = sheet_idx
+func _open_table(table_path: String) -> void:
+    var tab_idx = _find_editor_tab(table_path)
+    if tab_idx >= 0:
+        %EditorTabs.current_tab = tab_idx
         return
-    var table_reader = TableAccess.get_table_reader(path)
+    var table_reader = TableAccess.get_table_reader(table_path)
     table_reader.open()
     var metadata = table_reader.metadata
     table_reader.close()
 
     var sheet = preload(
-        "res://addons/librarian/ui/spreadsheet/spreadsheet_container.tscn"
+        "res://addons/librarian/ui/spreadsheet/spreadsheet_editor_tab.tscn"
     ).instantiate()
-    %TabsContainer.add_child(sheet)
     sheet.name = metadata.name
-
-    %TabsBar.add_tab(metadata.name)
-    var new_tab_idx = %TabsBar.tab_count - 1
-    %TabsBar.set_tab_button_icon(new_tab_idx, close_sheet_icon)
-    %TabsBar.set_tab_metadata(new_tab_idx, {
-        "path": path,
+    _new_editor_tab(sheet,{
+        "id": table_path,
         "table_metadata": metadata
     })
 
-    %TabsBar.current_tab = new_tab_idx
-    ## edge case on creation of first tab
-    if %TabsBar.tab_count == 1:
-        _on_spreadsheets_tab_bar_tab_changed(0)
-    message_bus().main_screen_table_changed.emit(table_reader.metadata)
-    sheet.load_table(path)
+func _open_settings() -> void:
+    var idx := _find_editor_tab(SETTINGS_ID)
+    if idx >= 0:
+        %EditorTabs.current_tab = idx
+        return
+    var settings = preload("res://addons/librarian/ui/library_settings/library_settings_editor_tab.tscn").instantiate()
+    settings.name = "Settings"
+    _new_editor_tab(settings, {
+        "id": ".library_settings"
+    })
+
+func _new_editor_tab(tab: Control, tab_metadata: Dictionary, focus_new: bool = true) -> void:
+    %EditorTabs.add_child(tab)
+    var new_tab_idx = %EditorTabs.get_tab_count() - 1
+    %EditorTabs.set_tab_button_icon(new_tab_idx, close_sheet_icon)
+    %EditorTabs.set_tab_metadata(new_tab_idx, tab_metadata)
+    if focus_new:
+        %EditorTabs.current_tab = new_tab_idx
+    message_bus().main_screen_table_changed.emit(tab_metadata.get("table_metadata"))
+    tab.load_content(tab_metadata.get("id"))
 
 ## Searches existing open sheets for one that has opened the given path.
 ## Returns the tab index of that sheet, or -1 if not found.
-func _find_sheet(path: String) -> int:
-    for i in range(%TabsBar.tab_count):
-        var metadata = %TabsBar.get_tab_metadata(i)
-        if metadata and metadata["path"] == path:
+func _find_editor_tab(id: String) -> int:
+    for i in range(%EditorTabs.get_tab_count()):
+        var metadata = %EditorTabs.get_tab_metadata(i)
+        if metadata and metadata["id"] == id:
             return i
     return -1
 
-func _is_spreadsheet_active() -> bool:
-    if %TabsBar.current_tab < 0:
-        Util.printwarn("No open spreadsheet.")
-        return false
-    return true
-
 func _get_active_spreadsheet():
-    return %TabsContainer.get_tab(%TabsContainer.current_tab_focus)
+    return %EditorTabs.get_tab(%EditorTabs.current_tab)
 
 func _evaluate_active_controls():
     var table = _get_active_spreadsheet()
@@ -78,57 +83,15 @@ func _evaluate_active_controls():
             node.disabled = not row_operators_enabled
 
 func _get_active_spreadsheet_metadata() -> LibraryTableInfo:
-    if not _is_spreadsheet_active():
+    if %EditorTabs.get_tab_count() < 1:
         return null
-    var tab_metadata := %TabsBar.get_tab_metadata(%TabsBar.current_tab) as Dictionary
+    var tab_metadata := %EditorTabs.get_tab_metadata(%EditorTabs.current_tab) as Dictionary
     if not tab_metadata:
         return null
     return tab_metadata.get("table_metadata")
 
-func _on_spreadsheets_tab_bar_tab_changed(tab:int) -> void:
-    if tab < 0 or tab >= %TabsBar.tab_count:
-        _evaluate_active_controls()
-        message_bus().main_screen_table_changed.emit(null)
-        return
-    var metadata = %TabsBar.get_tab_metadata(tab)
-    ## edge case on creation of first tab
-    if not metadata:
-        return
-    %TabsContainer.current_tab_focus = tab
-    message_bus().main_screen_table_changed.emit(metadata["table_metadata"])
-    _evaluate_active_controls()
-
-func _on_spreadsheets_tab_bar_button_pressed(tab: int) -> void:
-    %TabsContainer.remove_tab(tab)
-    %TabsBar.remove_tab(tab)
-
-func _on_spreadsheets_tab_bar_active_tab_rearranged(_idx_to:int) -> void:
-    var ids: Array[StringName] = []
-    ids.resize(%TabsBar.tab_count)
-    for i in range(%TabsBar.tab_count):
-        ids[i] = %TabsBar.get_tab_metadata(i)["table_metadata"].id
-    %TabsContainer.sort_tabs(ids)
-    pass # _on_spreadsheets_tab_bar_tab_changed(%TabsBar.current_tab)
-
-func _on_new_row_button_pressed() -> void:
-    var table_metadata = _get_active_spreadsheet_metadata()
-    if not table_metadata:
-        return
-    message_bus().row_added.emit(table_metadata.id)
-
-func _on_delete_selected_rows_button_pressed() -> void:
-    _evaluate_active_controls()
-    var table = _get_active_spreadsheet()
-    if not table:
-        return
-    var checked_rows: Array[int] = table.get_checked_rows()
-    checked_rows.sort()
-    checked_rows.reverse()
-    for row_idx in checked_rows:
-        message_bus().row_deleted.emit(_get_active_spreadsheet_metadata().id, row_idx)
-
-func _on_row_select_updated(_table_id: StringName, _selected_row_count: int) -> void:
-    _evaluate_active_controls()
+func _on_editor_tab_bar_button_pressed(tab: int) -> void:
+    %EditorTabs.remove_tab(tab)
 
 func _shortcut_input(event: InputEvent) -> void:
     if not is_visible_in_tree(): return
@@ -138,13 +101,13 @@ func _shortcut_input(event: InputEvent) -> void:
     if Shortcuts.save_sheet.matches_event(event) or Shortcuts.save_sheet_alt.matches_event(event):
         var sheet = %TabsContainer.get_tab(%TabsContainer.current_tab_focus)
         if sheet:
-            sheet.save_table()
+            sheet.save_content()
             handled = true
     elif Shortcuts.save_all_sheets.matches_event(event):
         for i in range(%TabsContainer.count()):
             var sheet = %TabsContainer.get_tab(i)
             if sheet:
-                sheet.save_table()
+                sheet.save_content()
                 handled = true
     if handled:
         get_viewport().set_input_as_handled()
