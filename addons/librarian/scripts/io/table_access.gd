@@ -6,10 +6,10 @@
 
 @tool
 
-const ltcsv = preload("res://addons/librarian/scripts/io/ltscv.gd")
+const ltcsv = preload("res://addons/librarian/scripts/io/ltcsv.gd")
 
-static func get_table_reader(table_path: String):
-    return ltcsv.get_table_reader(table_path)
+static func read_table(table_path: String):
+    return ltcsv.read_table(table_path)
 
 static func get_table_writer(table_path: String):
     return ltcsv.get_table_writer(table_path)

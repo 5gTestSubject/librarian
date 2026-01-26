@@ -12,7 +12,7 @@ const SETTINGS_ID := ".settings"
 
 func _ready() -> void:
     LibraryMessageBus.sheets_tab_bar_grab_focus.connect(func(): %EditorTabs.get_tab_bar().grab_focus())
-    LibraryMessageBus.open_table.connect(_open_table)
+    LibraryMessageBus.read_table.connect(_open_table)
     LibraryMessageBus.open_settings.connect(_open_settings)
     LibraryMessageBus.main_screen_table_changed.connect(
         func(_table_metadata):
@@ -29,8 +29,7 @@ func _open_table(table_path: String) -> void:
         "res://addons/librarian/ui/spreadsheet/spreadsheet_editor_tab.tscn"
     ).instantiate()
 
-    var table_reader = TableAccess.get_table_reader(table_path)
-    table_reader.open()
+    var table_reader = TableAccess.read_table(table_path)
     sheet.name = table_reader.metadata.name
     table_reader.close()
 

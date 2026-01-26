@@ -58,7 +58,7 @@ func _on_files_changed(_files: PackedStringArray) -> void:
     refresh()
 
 func _on_item_activated() -> void:
-    LibraryMessageBus.open_table.emit(get_selected().get_metadata(COL_NAME))
+    LibraryMessageBus.read_table.emit(get_selected().get_metadata(COL_NAME))
 
 func _on_item_mouse_selected(mouse_position:Vector2, mouse_button_index:int) -> void:
     if mouse_button_index == MOUSE_BUTTON_RIGHT:
@@ -70,7 +70,7 @@ func _on_context_menu_id_pressed(id: int) -> void:
     var tree_item := get_selected()
     match CONTEXT_MENU_OPERATIONS.get(id):
         &"Open":
-            LibraryMessageBus.open_table.emit(tree_item.get_metadata(COL_NAME))
+            LibraryMessageBus.read_table.emit(tree_item.get_metadata(COL_NAME))
         &"Rename":
             printerr("TODO: implement spreadsheet rename")
         &"Delete":

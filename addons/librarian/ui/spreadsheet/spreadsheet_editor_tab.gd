@@ -10,8 +10,7 @@ var metadata: LibraryTableInfo
 ## Load the given table path into this spreadsheet using the given metadata.
 func load_content(table_path: String) -> void:
     loaded_path = table_path
-    var reader = TableAccess.get_table_reader(table_path)
-    reader.open()
+    var reader = TableAccess.read_table(table_path)
     metadata = reader.metadata
     name = metadata.name
     %Spreadsheet.reset_table(metadata)
