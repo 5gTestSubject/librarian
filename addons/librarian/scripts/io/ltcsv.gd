@@ -38,9 +38,18 @@ static func create_table(table_path: String, name: String) -> bool:
     var file_path := to_ltcsv_filepath(table_path)
     if FileAccess.file_exists(file_path):
         return false
+
+    var tags = LibraryTableFieldInfo.new()
+    tags.id = UUID.v4()
+    tags.name = "Tags"
+    tags.description = "Tags applied to the entry."
+    tags.type = Util.COL_TYPE_TAGS
+
     var metadata = LibraryTableInfo.new()
     metadata.id = UUID.v4()
     metadata.name = name
+    metadata.fields.push_back(tags)
+
     var writer = write_table(table_path, metadata)
     writer.flush()
     writer.close()
