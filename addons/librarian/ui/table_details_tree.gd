@@ -33,6 +33,7 @@ var _table_fields_root: TreeItem
 @export_group("Icons")
 @export var _add_icon: Texture2D
 @export var _delete_icon: Texture2D
+@export var _tags_icon: Texture2D
 @export var _bool_icon: Texture2D
 @export var _int_icon: Texture2D
 @export var _float_icon: Texture2D
@@ -80,6 +81,11 @@ func refresh() -> void:
 func _refresh_field(field_idx: int, field_item: TreeItem) -> void:
     var field = metadata.fields[field_idx]
     field_item.set_text(COL_FIELD_NAME, field.name)
+
+    if field.type == Util.COL_TYPE_TAGS:
+        field_item.set_icon(COL_FIELD_NAME, _tags_icon)
+        return
+
     field_item.add_button(COL_FIELD_ACTIONS, _delete_icon, DELETE_FIELD_BUTTON_ID, false, "Delete table column")
 
     var desc_item = field_item.create_child()
