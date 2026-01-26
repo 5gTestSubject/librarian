@@ -4,6 +4,7 @@ const Properties = preload("res://addons/librarian/properties.gd")
 
 const MAX_INT := 2147483647
 
+const COL_TYPE_TAGS := &"tags"
 const COL_TYPE_BOOL := &"bool"
 const COL_TYPE_NUM := &"number"
 const COL_TYPE_STRING := &"string"
