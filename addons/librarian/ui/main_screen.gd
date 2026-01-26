@@ -29,8 +29,7 @@ func _open_table(table_path: String) -> void:
         "res://addons/librarian/ui/spreadsheet/spreadsheet_editor_tab.tscn"
     ).instantiate()
 
-    var table_reader = TableAccess.get_table_reader(table_path)
-    table_reader.open()
+    var table_reader = TableAccess.read_table(table_path)
     sheet.name = table_reader.metadata.name
     table_reader.close()
 
