@@ -26,12 +26,12 @@ static func read_table(table_path: String):
 
 static func write_table(table_path: String, metadata: LibraryTableInfo):
     var file_path := to_ltcsv_filepath(table_path)
-    var file := FileAccess.open(file_path, FileAccess.READ)
+    var file := FileAccess.open(file_path, FileAccess.WRITE)
     if not file:
         printerr("Failed to open \"%s\". Code %s." % [file_path, FileAccess.get_open_error()])
         return null
     file.store_line(VERSION_STRING)
-    file.store_line(JSON.stringify(metadata))
+    file.store_line(JSON.stringify(metadata.to_dict()))
     return preload("res://addons/librarian/scripts/io/ltcsv_writer_prealpha.gd").new(file, metadata)
 
 static func create_table(table_path: String, name: String) -> bool:
