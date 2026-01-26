@@ -1,5 +1,16 @@
 @tool
 
+static func to_tags(value) -> Array[StringName]:
+    var result: Array[StringName] = []
+    var s := str(value).strip_edges()
+    if s.left(1) != "[" or s.right(1) != "]":
+        return result
+    var tokens := s.substr(1, s.length() - 2).split(",")
+    result.resize(tokens.size())
+    for i in result.size():
+        result[i] = StringName(tokens[i])
+    return result
+
 static func to_bool(value) -> bool:
     match(typeof(value)):
         TYPE_NIL: return false

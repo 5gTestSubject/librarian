@@ -146,6 +146,8 @@ func iter_entries():
 func _get_cell_scene(column_index: int) -> Control:
     var info := _metadata.fields[column_index]
     match info.type:
+        Util.COL_TYPE_TAGS:
+            return preload("res://addons/librarian/ui/spreadsheet/cells/tags_cell.tscn").instantiate()
         Util.COL_TYPE_BOOL:
             return preload("res://addons/librarian/ui/spreadsheet/cells/bool_cell.tscn").instantiate()
         Util.COL_TYPE_NUM:
