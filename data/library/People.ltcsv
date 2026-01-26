@@ -1,4 +1,4 @@
 pre-alpha
-{"description":"","fields":[{"description":"","id":"2b6006fc-3851-4b19-9637-19e6697cf94e","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"81e9ca24-d332-464c-9dfa-4817ebd388e8","name":"Age","number_info":{"type":"Integer"},"optional":false,"type":"number"},{"description":"","id":"0db8cacf-9316-43c1-8612-5cd33efa9cdb","name":"Favorite color","optional":false,"type":"color"}],"id":"2d98b44b-a135-4095-9594-90710a041e17","name":"People","version":"pre-alpha"}
+{"description":"","fields":[{"description":"","id":"2b6006fc-3851-4b19-9637-19e6697cf94e","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"81e9ca24-d332-464c-9dfa-4817ebd388e8","name":"Age","number_info":{"type":"Integer"},"optional":false,"type":"number"},{"description":"","id":"0db8cacf-9316-43c1-8612-5cd33efa9cdb","name":"Favorite color","optional":false,"type":"color"}],"id":"2d98b44b-a135-4095-9594-90710a041e17","name":"People"}
 Billiam,11,c3ee76ff
 Luna,23,1b3956ff

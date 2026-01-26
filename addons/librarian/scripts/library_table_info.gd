@@ -29,7 +29,6 @@ func deep_copy() -> LibraryTableInfo:
 
 func to_dict() -> Dictionary:
     var ret := {}
-    ret["version"] = "pre-alpha"
     ret["id"] = id
     ret["name"] = name
     ret["description"] = description
@@ -37,7 +36,6 @@ func to_dict() -> Dictionary:
     return ret
 
 static func from_dict(raw: Dictionary) -> LibraryTableInfo:
-    assert(raw["version"] == "pre-alpha", "Unidentified metadata version %s" % raw["version"])
     var table = LibraryTableInfo.new()
     table.id = raw.get("id", ZERO_UUID)
     table.name = raw.get("name", "")

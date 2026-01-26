@@ -1,5 +1,5 @@
 pre-alpha
-{"description":"","fields":[{"description":"","id":"4ca5ac97-7fce-462f-945e-2108e8df4996","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"d1ff1e1f-2aa6-48b9-a4ef-a0f85d0197bb","name":"Description","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"b711a4dd-be59-4916-b878-48ea7879001f","name":"MaxStack","number_info":{"type":"Integer"},"optional":false,"type":"number"}],"id":"85122390-1939-4511-aebc-bfc42872e192","name":"Items","version":"pre-alpha"}
+{"description":"","fields":[{"description":"","id":"4ca5ac97-7fce-462f-945e-2108e8df4996","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"d1ff1e1f-2aa6-48b9-a4ef-a0f85d0197bb","name":"Description","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"b711a4dd-be59-4916-b878-48ea7879001f","name":"MaxStack","number_info":{"type":"Integer"},"optional":false,"type":"number"}],"id":"85122390-1939-4511-aebc-bfc42872e192","name":"Items"}
 Axe,A trusty axe.,1
 Apple,Ooo tasty.,99
 Wine,Shh.,9
