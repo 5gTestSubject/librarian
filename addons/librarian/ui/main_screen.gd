@@ -12,7 +12,7 @@ const SETTINGS_ID := ".settings"
 
 func _ready() -> void:
     LibraryMessageBus.sheets_tab_bar_grab_focus.connect(func(): %EditorTabs.get_tab_bar().grab_focus())
-    LibraryMessageBus.read_table.connect(_open_table)
+    LibraryMessageBus.open_table.connect(_open_table)
     LibraryMessageBus.open_settings.connect(_open_settings)
     LibraryMessageBus.main_screen_table_changed.connect(
         func(_table_metadata):

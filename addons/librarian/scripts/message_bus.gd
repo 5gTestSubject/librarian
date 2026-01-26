@@ -4,7 +4,7 @@ extends Node
 const AUTOLOAD_NAME := "LibraryMessageBus"
 const AUTOLOAD_NODE_PATH := ^"/root/LibraryMessageBus"
 
-signal read_table(table_path: String)
+signal open_table(table_path: String)
 signal open_settings
 
 signal main_screen_table_changed(table_metadata: LibraryTableInfo)
