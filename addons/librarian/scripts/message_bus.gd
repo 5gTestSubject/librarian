@@ -1,8 +1,8 @@
 @tool
 extends Node
 
-const AUTOLOAD_NAME := "LibrarianMessageBus"
-const AUTOLOAD_NODE_PATH := ^"/root/LibrarianMessageBus"
+const AUTOLOAD_NAME := "LibraryMessageBus"
+const AUTOLOAD_NODE_PATH := ^"/root/LibraryMessageBus"
 
 signal open_table(table_path: String)
 signal open_settings

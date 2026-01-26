@@ -1,7 +1,6 @@
 @tool
 extends GridContainer
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 const TITLE_CELL_SCENE = preload("res://addons/librarian/ui/spreadsheet/cells/column_title.tscn")
@@ -21,13 +20,13 @@ var _hide_row_nums := false
 var _hidden_field_idxs := {}
 
 func _ready() -> void:
-    message_bus().field_updated.connect(_on_field_updated)
-    message_bus().field_added.connect(_on_field_added)
-    message_bus().field_deleted.connect(_on_field_deleted)
-    message_bus().field_moved.connect(_on_field_moved)
-    message_bus().row_added.connect(_on_row_added)
-    message_bus().row_deleted.connect(_on_row_deleted)
-    message_bus().row_moved.connect(_on_row_moved)
+    LibraryMessageBus.field_updated.connect(_on_field_updated)
+    LibraryMessageBus.field_added.connect(_on_field_added)
+    LibraryMessageBus.field_deleted.connect(_on_field_deleted)
+    LibraryMessageBus.field_moved.connect(_on_field_moved)
+    LibraryMessageBus.row_added.connect(_on_row_added)
+    LibraryMessageBus.row_deleted.connect(_on_row_deleted)
+    LibraryMessageBus.row_moved.connect(_on_row_moved)
 
 func get_metadata() -> LibraryTableInfo:
     return _metadata
@@ -222,7 +221,7 @@ func get_checked_rows() -> Array[int]:
 #         get_child(get_child_count() - 1).grab_focus()
 #         handled = true
 #     elif Shortcuts.exit_sheet.matches_event(event):
-#         message_bus().sheets_tab_bar_grab_focus.emit()
+#         LibraryMessageBus.sheets_tab_bar_grab_focus.emit()
 #         handled = true
 
 #     if handled:
@@ -306,7 +305,7 @@ func _on_row_moved(table_id: StringName, previous_row_idx: int, new_row_idx: int
 func _on_row_checked(_checked: bool) -> void:
     if not _metadata:
         return
-    message_bus().row_select_updated.emit(_metadata.id, get_checked_rows_count())
+    LibraryMessageBus.row_select_updated.emit(_metadata.id, get_checked_rows_count())
 #endregion
 
 func _setup_test_data() -> void:

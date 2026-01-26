@@ -1,7 +1,6 @@
 @tool
 extends Tree
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const Util = preload("res://addons/librarian/utils.gd")
 
 const COL_FIELD_NAME := 0
@@ -41,10 +40,10 @@ var _table_fields_root: TreeItem
 @export var _color_icon: Texture2D
 
 func _ready() -> void:
-    message_bus().field_updated.connect(func(_id, _idx): refresh())
-    message_bus().field_added.connect(func(_id): refresh())
-    message_bus().field_deleted.connect(func(_id, _idx): refresh())
-    message_bus().field_moved.connect(func(_id, _old_idx, _new_idx): refresh())
+    LibraryMessageBus.field_updated.connect(func(_id, _idx): refresh())
+    LibraryMessageBus.field_added.connect(func(_id): refresh())
+    LibraryMessageBus.field_deleted.connect(func(_id, _idx): refresh())
+    LibraryMessageBus.field_moved.connect(func(_id, _old_idx, _new_idx): refresh())
     _root = create_item()
     refresh()
 
@@ -154,7 +153,7 @@ func _on_item_edited() -> void:
     # field title updated
     if edited_parent == _table_fields_root:
         metadata.fields[edited_item.get_index()].name = edited_item.get_text(COL_FIELD_NAME)
-        message_bus().field_updated.emit(metadata.id, edited_item.get_index())
+        LibraryMessageBus.field_updated.emit(metadata.id, edited_item.get_index())
         return
 
     # field property updated
@@ -174,7 +173,7 @@ func _on_item_edited() -> void:
             field.type = FIELD_TYPE_DROPDOWN[int(edited_item.get_range(COL_FIELD_PROP_VALUE))]
         _:
             printerr("TODO support updating field property `%s`" % edited_item.get_text(COL_FIELD_PROP_KEY))
-    message_bus().field_updated.emit(metadata.id, edited_parent.get_index())
+    LibraryMessageBus.field_updated.emit(metadata.id, edited_parent.get_index())
 
 func _on_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
     # table action
@@ -192,6 +191,6 @@ func _on_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index
                 return
             var field_index := item.get_index()
             metadata.fields.remove_at(field_index)
-            message_bus().field_deleted.emit(metadata.id, field_index)
+            LibraryMessageBus.field_deleted.emit(metadata.id, field_index)
         _:
             printerr("Unrecognized button.")
