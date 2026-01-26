@@ -1,6 +1,7 @@
 @tool
 extends PanelContainer
 
+const Util = preload("res://addons/librarian/utils.gd")
 const UUID = preload("res://addons/librarian/scripts/uuid.gd")
 
 @export var metadata: LibraryTableInfo:
@@ -34,3 +35,12 @@ func _on_new_field_submitted(name: String, description: String, type: StringName
     field.id = UUID.v4()
     metadata.fields.append(field)
     LibraryMessageBus.field_added.emit(metadata.id)
+
+    # if last (now 2nd-last) field was tags, keep it that way
+    if metadata.fields.size() >= 2 and metadata.fields[metadata.fields.size() - 2].type == Util.COL_TYPE_TAGS:
+        var tags_field = metadata.fields.pop_at(metadata.fields.size() - 2)
+        metadata.fields.push_back(tags_field)
+        LibraryMessageBus.field_moved.emit(
+            metadata.id,
+            metadata.fields.size() - 2,
+            metadata.fields.size() - 1)
