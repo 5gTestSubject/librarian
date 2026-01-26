@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 const TagAccess := preload("res://addons/librarian/scripts/io/tag_access.gd")
