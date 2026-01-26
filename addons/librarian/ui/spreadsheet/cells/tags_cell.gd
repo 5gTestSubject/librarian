@@ -9,8 +9,8 @@ var cell_value: Array[StringName]:
 
 func refresh() -> void:
     var badge_parent := $TagBadges
-    for i in range(badge_parent.get_child_count()):
-        var child := badge_parent.get_child(i)
+    for _i in range(badge_parent.get_child_count()):
+        var child := badge_parent.get_child(0)
         badge_parent.remove_child(child)
         child.queue_free()
     for tag_id in cell_value:
