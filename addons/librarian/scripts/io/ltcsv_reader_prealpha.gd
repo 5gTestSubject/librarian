@@ -17,6 +17,8 @@ func read() -> Array:
         return []
     for i in range(min(result.size(), metadata.fields.size())):
         match metadata.fields[i].type:
+            Util.COL_TYPE_TAGS:
+                result[i] = Convert.to_tags(result[i])
             Util.COL_TYPE_BOOL:
                 result[i] = Convert.to_bool(result[i])
             Util.COL_TYPE_NUM:

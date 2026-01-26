@@ -4,6 +4,7 @@ const Properties = preload("res://addons/librarian/properties.gd")
 
 const MAX_INT := 2147483647
 
+const COL_TYPE_TAGS := &"tags"
 const COL_TYPE_BOOL := &"bool"
 const COL_TYPE_NUM := &"number"
 const COL_TYPE_STRING := &"string"
@@ -22,6 +23,16 @@ static func printwarn(msg: String) -> void:
 static func path_combine(path1: String, path2: String) -> String:
     return path1.trim_suffix("/") + "/" + path2.trim_prefix("/")
 
+static func clear_children(node: Node, include_internal: bool = false) -> void:
+    for _i in range(node.get_child_count(include_internal)):
+        var child = node.get_child(0, include_internal)
+        node.remove_child(child)
+        child.queue_free()
+
+static func clear_children_lazy(node: Node, include_internal: bool = false) -> void:
+    for _i in range(node.get_child_count(include_internal)):
+        var child = node.get_child(0, include_internal)
+        child.queue_free()
 
 #region Compare Metadata
 ## Returns a 3-array of the following structure.

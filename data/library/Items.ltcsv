@@ -1,5 +1,5 @@
 pre-alpha
-{"description":"","fields":[{"description":"","id":"4ca5ac97-7fce-462f-945e-2108e8df4996","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"d1ff1e1f-2aa6-48b9-a4ef-a0f85d0197bb","name":"Description","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"b711a4dd-be59-4916-b878-48ea7879001f","name":"MaxStack","number_info":{"type":"Integer"},"optional":false,"type":"number"}],"id":"85122390-1939-4511-aebc-bfc42872e192","name":"Items"}
-Axe,A trusty axe.,1
-Apple,Ooo tasty.,99
-Wine,Shh.,9
+{"description":"","fields":[{"description":"","id":"4ca5ac97-7fce-462f-945e-2108e8df4996","name":"Name","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"d1ff1e1f-2aa6-48b9-a4ef-a0f85d0197bb","name":"Description","optional":false,"text_info":{"placeholder_text":""},"type":"string"},{"description":"","id":"b711a4dd-be59-4916-b878-48ea7879001f","name":"MaxStack","number_info":{"type":"Integer"},"optional":false,"type":"number"},{"description":"","id":"26b04d1f-4fb3-47ec-a199-3778461bc60c","name":"Tags","optional":false,"type":"tags"}],"id":"85122390-1939-4511-aebc-bfc42872e192","name":"Items"}
+Axe,A trusty axe.,1,[6349f897-1c70-4952-af69-8a132c464e05]
+Apple,Ooo tasty.,99,[ecfafe6b-987a-4a59-8cb3-841079bbbb2a]
+Wine,Shh.,9,"[6349f897-1c70-4952-af69-8a132c464e05,ecfafe6b-987a-4a59-8cb3-841079bbbb2a]"
