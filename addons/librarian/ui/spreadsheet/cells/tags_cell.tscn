@@ -1,30 +1,36 @@
-[gd_scene load_steps=4 format=3 uid="uid://dk05na4kv0sh4"]
+[gd_scene load_steps=5 format=3 uid="uid://dk05na4kv0sh4"]
 
 [ext_resource type="PackedScene" uid="uid://bgor1ye1gg5go" path="res://addons/librarian/ui/spreadsheet/cells/cell_base.tscn" id="1_hi6ew"]
 [ext_resource type="Script" uid="uid://d1dmjukbm5g0l" path="res://addons/librarian/ui/spreadsheet/cells/tags_cell.gd" id="2_8wrh0"]
-[ext_resource type="PackedScene" uid="uid://d1uenl1tagco4" path="res://addons/librarian/ui/elements/tag_badge.tscn" id="2_xg7kd"]
+[ext_resource type="Texture2D" uid="uid://dp4yd2y5erre5" path="res://addons/librarian/res/icons/godot/Gear.svg" id="3_jvj5x"]
+[ext_resource type="PackedScene" uid="uid://qixmlwdq13oo" path="res://addons/librarian/ui/elements/tag_selection.tscn" id="4_quh2s"]
 
 [node name="CellBase" instance=ExtResource("1_hi6ew")]
 
 [node name="TagsCell" type="PanelContainer" parent="." index="0"]
 layout_mode = 2
 script = ExtResource("2_8wrh0")
+_badge_parent = NodePath("VBoxContainer/HBoxContainer/TagBadges")
+_selector_scene = NodePath("VBoxContainer/TagSelection")
 
-[node name="TagBadges" type="HFlowContainer" parent="TagsCell" index="0"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TagsCell" index="0"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TagsCell/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="ConfigureButton" type="Button" parent="TagsCell/VBoxContainer/HBoxContainer" index="0"]
+layout_mode = 2
+size_flags_vertical = 0
+icon = ExtResource("3_jvj5x")
+
+[node name="TagBadges" type="HFlowContainer" parent="TagsCell/VBoxContainer/HBoxContainer" index="1"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 
-[node name="TagBadge" parent="TagsCell/TagBadges" index="0" instance=ExtResource("2_xg7kd")]
+[node name="TagSelection" parent="TagsCell/VBoxContainer" index="1" instance=ExtResource("4_quh2s")]
+visible = false
 layout_mode = 2
 
-[node name="TagBadge2" parent="TagsCell/TagBadges" index="1" instance=ExtResource("2_xg7kd")]
-layout_mode = 2
-
-[node name="TagBadge3" parent="TagsCell/TagBadges" index="2" instance=ExtResource("2_xg7kd")]
-layout_mode = 2
-
-[node name="TagBadge4" parent="TagsCell/TagBadges" index="3" instance=ExtResource("2_xg7kd")]
-layout_mode = 2
-
-[node name="TagBadge5" parent="TagsCell/TagBadges" index="4" instance=ExtResource("2_xg7kd")]
-layout_mode = 2
+[connection signal="pressed" from="TagsCell/VBoxContainer/HBoxContainer/ConfigureButton" to="TagsCell" method="_on_configure_button_pressed"]
+[connection signal="selection_update" from="TagsCell/VBoxContainer/TagSelection" to="TagsCell" method="_on_tag_selection_update"]

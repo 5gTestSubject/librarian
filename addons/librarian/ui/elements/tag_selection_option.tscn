@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfw1d28xlqffk"]
+
+[ext_resource type="Script" uid="uid://davfpan4gmawn" path="res://addons/librarian/ui/elements/tag_selection_option.gd" id="1_jwkyq"]
+
+[node name="TagSelectionOption" type="HBoxContainer"]
+offset_right = 256.0
+offset_bottom = 73.0
+script = ExtResource("1_jwkyq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TagColor" type="ColorRect" parent="HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TagTitle" type="RichTextLabel" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+fit_content = true
+
+[node name="TagDescription" type="RichTextLabel" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+fit_content = true
+
+[connection signal="toggled" from="HBoxContainer/CheckBox" to="." method="_on_checkbox_toggled"]
