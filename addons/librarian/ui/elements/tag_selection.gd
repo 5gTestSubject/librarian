@@ -64,6 +64,3 @@ func _on_filter_text_changed(new_text:String) -> void:
     else:
         for entry in entries:
             entry.visible = (entry.tag_name as String).containsn(new_text)
-
-func _on_close_button_pressed() -> void:
-    visible = false

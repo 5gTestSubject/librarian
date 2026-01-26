@@ -27,7 +27,7 @@ func refresh() -> void:
 
 func _on_configure_button_pressed() -> void:
     var selector := get_node(_selector_scene)
-    selector.visible = true
+    selector.visible = not selector.visible
     selector.refresh(cell_value)
 
 func _on_tag_selection_update(tag_ids: Array[StringName]) -> void:
