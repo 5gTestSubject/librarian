@@ -45,6 +45,8 @@ static func to_text(value) -> String:
             return str(int(value)) if int(value) == value else str(value)
         TYPE_COLOR:
             return value.to_html()
+        TYPE_ARRAY:
+            return "[" + ",".join(value.map(func(item): return str(item))) + "]"
         _:
             return str(value)
 
