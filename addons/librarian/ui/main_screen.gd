@@ -67,7 +67,8 @@ func _find_editor_tab(id: String) -> int:
     return -1
 
 func _on_editor_tab_bar_button_pressed(tab: int) -> void:
-    %EditorTabs.remove_tab(tab)
+    var editor_tab = %EditorTabs.get_tab_control(tab)
+    %EditorTabs.remove_child(editor_tab)
 
 func _on_editor_tab_changed(tab: int) -> void:
     var control = %EditorTabs.get_tab_control(tab)
