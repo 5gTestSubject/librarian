@@ -1,7 +1,6 @@
 @tool
 extends Container
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const Util := preload("res://addons/librarian/utils.gd")
 const UUID := preload("res://addons/librarian/scripts/uuid.gd")
 
@@ -28,4 +27,4 @@ func delete_selected() -> void:
     checked_rows.sort()
     checked_rows.reverse()
     for i in checked_rows:
-        message_bus().row_deleted.emit(%Spreadsheet.get_metadata().id, i)
+        LibraryMessageBus.row_deleted.emit(%Spreadsheet.get_metadata().id, i)

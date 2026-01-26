@@ -1,7 +1,6 @@
 @tool
 extends Container
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
@@ -16,7 +15,7 @@ func load_content(table_path: String) -> void:
     metadata = reader.metadata
     name = metadata.name
     %Spreadsheet.reset_table(metadata)
-    message_bus().main_screen_table_changed.emit(metadata)
+    LibraryMessageBus.main_screen_table_changed.emit(metadata)
     var data_row: Array = reader.read()
     while not data_row.is_empty() and not (data_row.size() == 1 and data_row[0] == null):
         %Spreadsheet.add_row(data_row)
@@ -39,7 +38,7 @@ func delete_selected() -> void:
     checked_rows.sort()
     checked_rows.reverse()
     for i in checked_rows:
-        message_bus().row_deleted.emit(%Spreadsheet.get_metadata().id, i)
+        LibraryMessageBus.row_deleted.emit(%Spreadsheet.get_metadata().id, i)
 
 func on_editor_tab_selected() -> void:
-    message_bus().main_screen_table_changed.emit(metadata)
+    LibraryMessageBus.main_screen_table_changed.emit(metadata)

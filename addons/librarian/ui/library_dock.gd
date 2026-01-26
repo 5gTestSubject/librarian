@@ -10,7 +10,7 @@ func _on_new_table_button_pressed() -> void:
     %NewTableDialog.popup()
 
 func _on_settings_button_pressed() -> void:
-    LibrarianMessageBus.open_settings.emit()
+    LibraryMessageBus.open_settings.emit()
 
 func _on_new_table_dialog_confirmed() -> void:
     if not %NewTableNameField.text.is_valid_filename():

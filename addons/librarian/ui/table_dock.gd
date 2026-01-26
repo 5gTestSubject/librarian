@@ -3,8 +3,6 @@ extends PanelContainer
 
 const UUID = preload("res://addons/librarian/scripts/uuid.gd")
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
-
 @export var metadata: LibraryTableInfo:
     get: return metadata
     set(value):
@@ -12,7 +10,7 @@ func message_bus(): return get_node(preload("res://addons/librarian/scripts/mess
         refresh()
 
 func _ready() -> void:
-    message_bus().main_screen_table_changed.connect(func(table_metadata): metadata = table_metadata)
+    LibraryMessageBus.main_screen_table_changed.connect(func(table_metadata): metadata = table_metadata)
 
 func refresh() -> void:
     %TableDetailsTree.metadata = metadata
@@ -35,4 +33,4 @@ func _on_new_field_submitted(name: String, description: String, type: StringName
     field.type = type
     field.id = UUID.v4()
     metadata.fields.append(field)
-    message_bus().field_added.emit(metadata.id)
+    LibraryMessageBus.field_added.emit(metadata.id)

@@ -1,7 +1,6 @@
 @tool
 extends Container
 
-func message_bus(): return get_node(preload("res://addons/librarian/scripts/message_bus.gd").AUTOLOAD_NODE_PATH)
 const Properties = preload("res://addons/librarian/properties.gd")
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
 const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
@@ -12,10 +11,10 @@ const SETTINGS_ID := ".settings"
 @export var close_sheet_icon: Texture2D
 
 func _ready() -> void:
-    message_bus().sheets_tab_bar_grab_focus.connect(func(): %EditorTabs.get_tab_bar().grab_focus())
-    message_bus().open_table.connect(_open_table)
-    message_bus().open_settings.connect(_open_settings)
-    message_bus().main_screen_table_changed.connect(
+    LibraryMessageBus.sheets_tab_bar_grab_focus.connect(func(): %EditorTabs.get_tab_bar().grab_focus())
+    LibraryMessageBus.open_table.connect(_open_table)
+    LibraryMessageBus.open_settings.connect(_open_settings)
+    LibraryMessageBus.main_screen_table_changed.connect(
         func(_table_metadata):
             if Engine.is_editor_hint():
                 EditorInterface.set_main_screen_editor(Util.MAIN_SCREEN_NAME))
