@@ -1,3 +1,4 @@
+@tool
 extends PanelContainer
 
 @export var tag_name: String:
