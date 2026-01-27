@@ -1,7 +1,6 @@
 @tool
 extends Tree
 
-const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 const COL_NAME := 0
@@ -74,6 +73,6 @@ func _on_context_menu_id_pressed(id: int) -> void:
         &"Rename":
             printerr("TODO: implement spreadsheet rename")
         &"Delete":
-            TableAccess.delete_table(tree_item.get_metadata(COL_NAME))
+            LibraryTableAccess.delete_table(tree_item.get_metadata(COL_NAME))
         _:
             printerr("Unrecognized context menu operation.")
