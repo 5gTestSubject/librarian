@@ -3,7 +3,6 @@ extends Container
 
 const Properties = preload("res://addons/librarian/properties.gd")
 const Shortcuts = preload("res://addons/librarian/shortcuts.gd")
-const TableAccess = preload("res://addons/librarian/scripts/io/table_access.gd")
 const Util = preload("res://addons/librarian/utils.gd")
 
 const SETTINGS_ID := ".settings"
@@ -29,7 +28,7 @@ func _open_table(table_path: String) -> void:
         "res://addons/librarian/ui/spreadsheet/spreadsheet_editor_tab.tscn"
     ).instantiate()
 
-    var table_reader = TableAccess.read_table(table_path)
+    var table_reader = LibraryTableAccess.read_table(table_path)
     sheet.name = table_reader.metadata.name
     table_reader.close()
 

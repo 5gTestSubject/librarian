@@ -1,4 +1,7 @@
 @tool
+class_name LibraryTagAccess
+
+## Provides operations on library tags. Tags are stored in `/.ltags`.
 
 const Properties = preload("res://addons/librarian/properties.gd")
 const Util = preload("res://addons/librarian/utils.gd")
