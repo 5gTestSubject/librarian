@@ -272,7 +272,8 @@ func _on_field_deleted(table_id: StringName, field_idx: int) -> void:
     _hidden_field_idxs.erase(field_idx)
     if not _metadata or table_id != _metadata.id:
         return
-    for i in range(get_child_count() - _metadata.fields.size() + field_idx, -1, get_spreadsheet_width()):
+    var old_width := _calculate_spreadsheet_width(_metadata.fields.size() + 1)
+    for i in range(get_child_count() - old_width + EXTRA_COLS + field_idx, -1, -old_width):
         var child = get_child(i)
         remove_child(child)
         child.queue_free()
